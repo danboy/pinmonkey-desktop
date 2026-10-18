@@ -19,11 +19,34 @@ Item {
         sessionLock.locked = true;
     }
 
-    IdleMonitor {
-        enabled: ShellSettings.idleLockEnabled
-        timeout: ShellSettings.idleLockMinutes * 60
-        onIsIdleChanged: if (isIdle && !sessionLock.locked)
-            root.lockSession()
+    // Loader-wrapped rather than a plain IdleMonitor: changing `timeout` on a live
+    // IdleMonitor updates the QML property but doesn't appear to actually recreate the
+    // underlying ext-idle-notify-v1 object, so the real timeout stays stuck at whatever it
+    // was when first created - confirmed by testing (a literal 5s timeout fired correctly;
+    // the ShellSettings-derived one, which starts at the 10-minute default before the
+    // settings file finishes loading async and only then updates to the real value, never
+    // fired even after a genuine multi-minute idle wait). Gating on ShellSettings.loaded
+    // avoids ever creating it with the wrong initial value, and force-reloading on every
+    // idleLockMinutes change handles the user editing it live from Settings.
+    Loader {
+        id: idleLoader
+
+        active: ShellSettings.loaded
+
+        sourceComponent: IdleMonitor {
+            enabled: ShellSettings.idleLockEnabled
+            timeout: ShellSettings.idleLockMinutes * 60
+            onIsIdleChanged: if (isIdle && !sessionLock.locked)
+                root.lockSession()
+        }
+
+        Connections {
+            target: ShellSettings
+            function onIdleLockMinutesChanged() {
+                idleLoader.active = false;
+                idleLoader.active = true;
+            }
+        }
     }
 
     WlSessionLock {
