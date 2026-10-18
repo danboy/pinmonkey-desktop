@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
 import qs.modules.components
+import qs.modules.services
 
 QuickToggleTile {
     id: root
@@ -20,5 +21,8 @@ QuickToggleTile {
     subtitle: on ? (connectedDevice ? connectedDevice.name : "On") : "Off"
 
     onToggled: Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled
-    onTitleClicked: Quickshell.execDetached(["gnome-control-center", "bluetooth"])
+    onTitleClicked: {
+        PopupCoordinator.closeAll();
+        SettingsState.openOn("bluetooth");
+    }
 }

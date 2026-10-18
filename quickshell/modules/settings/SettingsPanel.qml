@@ -1,0 +1,156 @@
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import qs
+import qs.modules.services
+
+Item {
+    id: root
+
+    function close() {
+        SettingsState.open = false;
+    }
+
+    Connections {
+        target: PopupCoordinator
+        function onCloseAll() {
+            root.close();
+        }
+    }
+
+    IpcHandler {
+        target: "settings"
+
+        function show(tab: string): void {
+            SettingsState.openOn(tab.length > 0 ? tab : "network");
+        }
+
+        function hide(): void {
+            root.close();
+        }
+    }
+
+    // Loader-gated so the layer-shell surface (and its on-demand keyboard focus) is fully
+    // destroyed on close rather than left mapped-but-hidden - see Launcher.qml for the same
+    // reasoning, and PopupCoordinator for why that matters (e.g. while the lock screen is up).
+    Loader {
+        active: SettingsState.open
+
+        sourceComponent: WlrLayershell {
+            id: settingsSurface
+
+            screen: Quickshell.screens[0]
+            layer: WlrLayer.Overlay
+            namespace: "settings"
+            color: "transparent"
+            keyboardFocus: WlrKeyboardFocus.OnDemand
+
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
+
+            Component.onCompleted: Qt.callLater(() => focusScope.forceActiveFocus())
+
+            FocusScope {
+                id: focusScope
+
+                anchors.fill: parent
+                focus: true
+
+                Keys.onEscapePressed: root.close()
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.close()
+                }
+
+                Rectangle {
+                    id: card
+
+                    anchors.centerIn: parent
+                    width: Config.settingsWidth
+                    height: Config.settingsHeight
+                    radius: Config.radiusLarge
+                    color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
+                    border.width: Config.borderWidth
+                    border.color: Config.colDivider
+
+                    MouseArea {
+                        // swallow clicks so the background MouseArea doesn't close the panel
+                        anchors.fill: parent
+                    }
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: Config.popupMargin
+                        spacing: Config.spacingLarge
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: Config.spacingSmall
+
+                            Repeater {
+                                model: [
+                                    {
+                                        id: "network",
+                                        label: "Network"
+                                    },
+                                    {
+                                        id: "bluetooth",
+                                        label: "Bluetooth"
+                                    }
+                                ]
+
+                                delegate: Rectangle {
+                                    id: tabButton
+
+                                    required property var modelData
+                                    readonly property bool active: SettingsState.tab === modelData.id
+
+                                    Layout.fillWidth: true
+                                    implicitHeight: Config.settingsTabHeight
+                                    radius: Config.radiusMedium
+                                    color: tabButton.active ? Config.colAccent : Config.colSurfaceVariant
+                                    border.width: Config.borderWidth
+                                    border.color: tabButton.active ? Config.colBorderAccent : Config.colBorder
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: tabButton.modelData.label
+                                        font.family: Config.fontFamily
+                                        font.bold: true
+                                        font.pixelSize: Config.fontSizeCaption
+                                        color: tabButton.active ? Config.colAccentText : Config.colText
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: SettingsState.tab = tabButton.modelData.id
+                                    }
+                                }
+                            }
+                        }
+
+                        NetworkSettings {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            visible: SettingsState.tab === "network"
+                        }
+
+                        BluetoothSettings {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            visible: SettingsState.tab === "bluetooth"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

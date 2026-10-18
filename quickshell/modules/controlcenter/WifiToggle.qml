@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Networking
 import qs.modules.components
+import qs.modules.services
 
 QuickToggleTile {
     id: root
@@ -27,5 +28,8 @@ QuickToggleTile {
     subtitle: on ? (connectedNetwork ? connectedNetwork.name : "On") : "Off"
 
     onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
-    onTitleClicked: Quickshell.execDetached(["gnome-control-center", "wifi"])
+    onTitleClicked: {
+        PopupCoordinator.closeAll();
+        SettingsState.openOn("network");
+    }
 }
