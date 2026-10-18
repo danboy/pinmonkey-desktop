@@ -35,8 +35,15 @@ Item {
 
                 config: "quickshell"
 
-                onPamMessage: if (pam.responseRequired)
-                    pam.respond(passwordField.text)
+                onPamMessage: {
+                    // Surface PAM's own message (e.g. a faillock lockout notice) instead of
+                    // only ever showing a generic failure - this is the actual reason, not
+                    // just "wrong password".
+                    if (pam.message.length > 0)
+                        errorLabel.text = pam.message;
+                    if (pam.responseRequired)
+                        pam.respond(passwordField.text);
+                }
 
                 onCompleted: result => {
                     passwordField.text = "";
@@ -45,7 +52,10 @@ Item {
                         errorLabel.text = "";
                         sessionLock.locked = false;
                     } else {
-                        errorLabel.text = "Authentication failed";
+                        // Keep whatever specific message PAM already relayed (e.g. a
+                        // lockout notice); only fall back to the generic text if none came.
+                        if (errorLabel.text.length === 0)
+                            errorLabel.text = "Authentication failed";
                         passwordField.forceActiveFocus();
                     }
                 }
@@ -184,6 +194,9 @@ Item {
                         id: errorLabel
 
                         Layout.alignment: Qt.AlignHCenter
+                        Layout.preferredWidth: Config.lockPasswordFieldWidth
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
                         font.family: Config.fontFamily
                         font.pixelSize: Config.fontSizeCaption
                         color: Config.colDanger
