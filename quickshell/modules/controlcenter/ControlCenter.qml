@@ -57,7 +57,26 @@ Rectangle {
             }
         }
 
-        PowerMenu {}
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Config.spacingSmall
+
+            PowerMenu {
+                Layout.fillWidth: true
+            }
+
+            IconToggle {
+                Layout.alignment: Qt.AlignTop
+                implicitWidth: Config.tileIconBoxSize
+                implicitHeight: Config.tileIconBoxSize
+                iconName: "preferences-system-symbolic"
+                iconFallback: "preferences-system"
+                onClicked: {
+                    PopupCoordinator.closeAll();
+                    SettingsState.openOn("network");
+                }
+            }
+        }
 
         Rectangle {
             Layout.fillWidth: true
