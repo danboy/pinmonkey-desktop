@@ -212,12 +212,15 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
 
     // === Screenshots ===
-    XF86Launch1 hotkey-overlay-title="Screenshot Tool" { spawn "quickshell" "ipc" "call" "screenshot" "show"; }
-    Ctrl+XF86Launch1 hotkey-overlay-title="Screenshot: Full Screen" { spawn "quickshell" "ipc" "call" "screenshot" "screen"; }
-    Alt+XF86Launch1 hotkey-overlay-title="Screenshot: Window" { spawn "quickshell" "ipc" "call" "screenshot" "window"; }
-    Print hotkey-overlay-title="Screenshot Tool" { spawn "quickshell" "ipc" "call" "screenshot" "show"; }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen" { spawn "quickshell" "ipc" "call" "screenshot" "screen"; }
-    Alt+Print hotkey-overlay-title="Screenshot: Window" { spawn "quickshell" "ipc" "call" "screenshot" "window"; }
+    // "--" is required before the target whenever the function name is "show" - it collides
+    // with the `ipc show` subcommand name and the CLI silently dumps target info instead of
+    // calling the function without it. Added to every call here for consistency/safety.
+    XF86Launch1 hotkey-overlay-title="Screenshot Tool" { spawn "quickshell" "ipc" "call" "--" "screenshot" "show"; }
+    Ctrl+XF86Launch1 hotkey-overlay-title="Screenshot: Full Screen" { spawn "quickshell" "ipc" "call" "--" "screenshot" "screen"; }
+    Alt+XF86Launch1 hotkey-overlay-title="Screenshot: Window" { spawn "quickshell" "ipc" "call" "--" "screenshot" "window"; }
+    Print hotkey-overlay-title="Screenshot Tool" { spawn "quickshell" "ipc" "call" "--" "screenshot" "show"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen" { spawn "quickshell" "ipc" "call" "--" "screenshot" "screen"; }
+    Alt+Print hotkey-overlay-title="Screenshot: Window" { spawn "quickshell" "ipc" "call" "--" "screenshot" "window"; }
     // === Display Profiles ===
     Mod+P hotkey-overlay-title="Cycle Display Profile" {
         spawn "dms" "ipc" "outputs" "cycleProfile";
