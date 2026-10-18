@@ -55,7 +55,11 @@ Singleton {
     }
 
     function hasFlag(blockContent, name) {
-        return new RegExp(`^\\s*${name}\\s*$`, "m").test(blockContent);
+        // [ \t]* (not \s*) so this can never cross a newline - \s* before an end-of-line "$"
+        // can otherwise consume the newline and following indentation, which earlier caused
+        // setFlag's replace to eat the next line's closing brace entirely (corrupting the
+        // file). Keep every regex in this file to a single line for the same reason.
+        return new RegExp(`^[ \\t]*${name}[ \\t]*$`, "m").test(blockContent);
     }
 
     function flagValue(blockContent, name) {
@@ -94,8 +98,8 @@ Singleton {
             return;
         }
         let content = text.substring(block.contentStart, block.contentEnd);
-        const activeRe = new RegExp(`^(\\s*)${name}\\s*$`, "m");
-        const commentRe = new RegExp(`^(\\s*)//\\s*${name}\\s*$`, "m");
+        const activeRe = new RegExp(`^([ \\t]*)${name}[ \\t]*$`, "m");
+        const commentRe = new RegExp(`^([ \\t]*)//[ \\t]*${name}[ \\t]*$`, "m");
         if (enabled) {
             if (activeRe.test(content)) {
                 return;
@@ -125,8 +129,8 @@ Singleton {
         let content = text.substring(block.contentStart, block.contentEnd);
         const v = quoted ? `"${value}"` : value;
         const line = `${name} ${v}`;
-        const activeRe = new RegExp(`^(\\s*)${name}\\s+\\S.*$`, "m");
-        const commentRe = new RegExp(`^(\\s*)//\\s*${name}\\s+\\S.*$`, "m");
+        const activeRe = new RegExp(`^([ \\t]*)${name}[ \\t]+\\S.*$`, "m");
+        const commentRe = new RegExp(`^([ \\t]*)//[ \\t]*${name}[ \\t]+\\S.*$`, "m");
         if (activeRe.test(content)) {
             content = content.replace(activeRe, `$1${line}`);
         } else if (commentRe.test(content)) {
@@ -150,7 +154,7 @@ Singleton {
         const block = root.findBlock(text, "tablet");
         let content = text.substring(block.contentStart, block.contentEnd);
         const line = `map-to-output "${outputName}"`;
-        const activeRe = /^(\s*)map-to-output\s+\S.*$/m;
+        const activeRe = /^([ \t]*)map-to-output[ \t]+\S.*$/m;
         if (activeRe.test(content))
             content = content.replace(activeRe, `$1${line}`);
         else
