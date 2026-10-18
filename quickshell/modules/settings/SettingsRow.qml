@@ -19,6 +19,7 @@ Rectangle {
 
     signal clicked
 
+    width: ListView.view ? ListView.view.width : implicitWidth
     Layout.fillWidth: true
     implicitHeight: Config.settingsRowHeight
     radius: Config.radiusMedium
