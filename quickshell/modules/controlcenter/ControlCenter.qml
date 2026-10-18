@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs
 import qs.modules.components
@@ -42,14 +41,6 @@ Rectangle {
             const step = 0.05;
             const delta = wheel.angleDelta.y > 0 ? step : -step;
             root.sink.audio.volume = Math.max(0, Math.min(1, root.volume + delta));
-        }
-    }
-
-    // TEMP: debug-only, remove before committing.
-    IpcHandler {
-        target: "debugcc"
-        function toggle(): void {
-            popup.visible = !popup.visible;
         }
     }
 
