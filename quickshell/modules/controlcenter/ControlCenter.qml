@@ -97,6 +97,13 @@ Rectangle {
             BluetoothToggle {}
         }
 
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Config.spacingSmall
+
+            DndToggle {}
+        }
+
         VolumeControl {}
 
         BrightnessControl {}

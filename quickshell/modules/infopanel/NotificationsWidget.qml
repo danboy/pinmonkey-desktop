@@ -33,10 +33,7 @@ ColumnLayout {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    for (const n of Notifications.trackedNotifications.values)
-                        n.dismiss();
-                }
+                onClicked: Notifications.clearAll()
             }
         }
     }

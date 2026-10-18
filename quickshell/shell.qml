@@ -3,6 +3,7 @@ import QtQuick
 import qs.modules.panel
 import qs.modules.launcher
 import qs.modules.osd
+import qs.modules.notifications
 import qs.modules.lockscreen
 import qs.modules.settings
 import qs.modules.screenshot
@@ -12,6 +13,7 @@ ShellRoot {
         Panel {}
         Launcher {}
         OsdWindow {}
+        NotificationToastWindow {}
         LockScreen {}
         SettingsPanel {}
         ScreenshotPanel {}

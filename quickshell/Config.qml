@@ -44,6 +44,7 @@ Singleton {
     readonly property int osdWidth: 280
     readonly property int osdBottomMargin: 64
     readonly property int osdVisibleMs: 1500
+    readonly property int notificationToastVisibleMs: 5000
     readonly property int animationDurationMs: 150
     readonly property int launcherWidth: 480
     readonly property int launcherHeight: 420

@@ -23,6 +23,10 @@ Item {
             label: "Sound"
         },
         {
+            id: "notifications",
+            label: "Notifications"
+        },
+        {
             id: "display",
             label: "Display"
         },
@@ -199,6 +203,11 @@ Item {
                             SoundSettings {
                                 anchors.fill: parent
                                 visible: SettingsState.tab === "sound"
+                            }
+
+                            NotificationSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "notifications"
                             }
 
                             DisplaySettings {

@@ -42,6 +42,7 @@ Rectangle {
 
         anchorItem: root
         implicitWidth: Config.infoPanelWidth
+        onVisibleChanged: NotificationToast.suppressed = visible
 
         Connections {
             target: PopupCoordinator

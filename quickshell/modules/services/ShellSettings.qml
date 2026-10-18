@@ -15,6 +15,7 @@ Singleton {
     property bool loaded: false
     property bool idleLockEnabled: true
     property int idleLockMinutes: 10
+    property bool notificationsDndEnabled: false
 
     function save() {
         // Don't overwrite the file with defaults before we've actually read whatever's
@@ -23,12 +24,14 @@ Singleton {
             return;
         file.setText(JSON.stringify({
             idleLockEnabled: root.idleLockEnabled,
-            idleLockMinutes: root.idleLockMinutes
+            idleLockMinutes: root.idleLockMinutes,
+            notificationsDndEnabled: root.notificationsDndEnabled
         }, null, 2));
     }
 
     onIdleLockEnabledChanged: root.save()
     onIdleLockMinutesChanged: root.save()
+    onNotificationsDndEnabledChanged: root.save()
 
     FileView {
         id: file
@@ -43,6 +46,8 @@ Singleton {
                     root.idleLockEnabled = data.idleLockEnabled;
                 if (typeof data.idleLockMinutes === "number")
                     root.idleLockMinutes = data.idleLockMinutes;
+                if (typeof data.notificationsDndEnabled === "boolean")
+                    root.notificationsDndEnabled = data.notificationsDndEnabled;
             } catch (e) {
                 console.log("ShellSettings: parse error", e);
             }

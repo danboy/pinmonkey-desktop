@@ -121,6 +121,48 @@ install_environment_d() {
     copy_file "$REPO_DIR/environment.d/cursor.conf" "$HOME/.config/environment.d/cursor.conf"
 }
 
+find_firefox_profile_dir() {
+    local base="$HOME/.mozilla/firefox" pattern d
+    for pattern in "*.default-release" "*.default"; do
+        for d in "$base"/$pattern; do
+            [ -d "$d" ] && { echo "$d"; return 0; }
+        done
+    done
+    return 1
+}
+
+install_firefox_theme() {
+    log "installing Firefox chrome tweaks (userChrome.css)"
+    local profile_dir
+    if ! profile_dir="$(find_firefox_profile_dir)"; then
+        log "no Firefox profile found under ~/.mozilla/firefox - skipping (run Firefox once first, then re-run this script)"
+        return
+    fi
+
+    copy_file "$REPO_DIR/firefox-theme/userChrome.css" "$profile_dir/chrome/userChrome.css"
+
+    local user_js="$profile_dir/user.js"
+    local pref_line='user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);'
+    touch "$user_js"
+    if grep -q "legacyUserProfileCustomizations.stylesheets" "$user_js"; then
+        sed -i "s|.*legacyUserProfileCustomizations\.stylesheets.*|$pref_line|" "$user_js"
+    else
+        printf '%s\n' "$pref_line" >> "$user_js"
+    fi
+    log "enabled legacyUserProfileCustomizations.stylesheets in $user_js"
+
+    cat <<'EOF'
+
+Firefox color theme (the "Pinmonkey Fall" tab/toolbar theme) can't be installed by this
+script - Firefox requires an explicit click to install any extension/theme, signed or not:
+  1. Open Firefox
+  2. Visit https://addons.mozilla.org/en-US/developers/addon/671fe9047ab342d6b3c3/versions/6592808
+  3. Download the signed .xpi and open it in Firefox (or drag it into a Firefox window)
+  4. Click "Add" on the install prompt
+Restart Firefox afterwards so userChrome.css takes effect too.
+EOF
+}
+
 seed_env_file() {
     if [ ! -e "$REPO_DIR/.env" ]; then
         cp "$REPO_DIR/.env.example" "$REPO_DIR/.env"
@@ -147,6 +189,7 @@ main() {
     install_font
     install_pam_service
     install_environment_d
+    install_firefox_theme
     seed_env_file
     ensure_video_group
 
