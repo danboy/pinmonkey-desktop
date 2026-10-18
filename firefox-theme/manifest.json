@@ -1,0 +1,67 @@
+{
+  "manifest_version": 2,
+  "name": "Pinmonkey Fall",
+  "version": "1.0",
+  "description": "Matches the pinmonkey-desktop shell's \"fall\" color scheme.",
+  "icons": {
+    "48": "icon-48.png",
+    "96": "icon-96.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pinmonkey-fall-theme@pinmonkey-desktop"
+    }
+  },
+  "theme": {
+    "images": {},
+    "colors": {
+      "frame": "#282422",
+      "frame_inactive": "#282422",
+
+      "tab_background_text": "rgba(251,241,199,0.55)",
+      "tab_selected": "#524840",
+      "tab_text": "#fbf1c7",
+      "tab_line": "#d65d0e",
+      "tab_loading": "#d65d0e",
+      "tab_background_separator": "rgba(251,241,199,0.1)",
+
+      "toolbar": "#282422",
+      "toolbar_text": "#fbf1c7",
+      "toolbar_field": "#524840",
+      "toolbar_field_text": "#fbf1c7",
+      "toolbar_field_border": "rgba(251,241,199,0.15)",
+      "toolbar_field_focus": "#6f6156",
+      "toolbar_field_text_focus": "#fbf1c7",
+      "toolbar_field_highlight": "#d65d0e",
+      "toolbar_field_highlight_text": "#fbf1c7",
+      "toolbar_top_separator": "rgba(251,241,199,0.1)",
+      "toolbar_bottom_separator": "rgba(251,241,199,0.1)",
+      "toolbar_vertical_separator": "rgba(251,241,199,0.1)",
+
+      "icons": "#fbf1c7",
+      "icons_attention": "#d65d0e",
+      "button_background_hover": "#6f6156",
+      "button_background_active": "#d65d0e",
+
+      "popup": "#524840",
+      "popup_text": "#fbf1c7",
+      "popup_border": "rgba(251,241,199,0.15)",
+      "popup_highlight": "#d65d0e",
+      "popup_highlight_text": "#fbf1c7",
+
+      "ntp_background": "#282422",
+      "ntp_text": "#fbf1c7",
+
+      "sidebar": "#282422",
+      "sidebar_text": "#fbf1c7",
+      "sidebar_border": "rgba(251,241,199,0.15)",
+      "sidebar_highlight": "#d65d0e",
+      "sidebar_highlight_text": "#fbf1c7",
+
+      "bookmark_text": "#fbf1c7"
+    },
+    "properties": {
+      "color_scheme": "dark"
+    }
+  }
+}
