@@ -1,0 +1,41 @@
+/* Matches pinmonkey-desktop's shape tokens (Config.qml):
+   radiusSmall=2, radiusMedium=3, radiusLarge=4, borderWidth=1, colBorder=rgba(251,241,199,.15)
+   Targets Firefox's internal UI structure - may need updating after Firefox updates. */
+
+:root {
+  --tab-border-radius: 3px !important;
+  --toolbarbutton-border-radius: 3px !important;
+  --panel-border-radius: 4px !important;
+}
+
+/* address bar */
+#urlbar-background,
+#urlbar[breakout][breakout-extend] > #urlbar-background {
+  border-radius: 3px !important;
+  border: 1px solid rgba(251, 241, 199, 0.15) !important;
+}
+
+/* tabs */
+.tabbrowser-tab .tab-background {
+  border-radius: 3px !important;
+}
+
+/* toolbar buttons */
+toolbar .toolbarbutton-1,
+#nav-bar toolbarbutton,
+#PanelUI-button {
+  border-radius: 3px !important;
+}
+
+/* panels / menus / autocomplete popups */
+panel,
+menupopup {
+  border-radius: 4px !important;
+  border: 1px solid rgba(251, 241, 199, 0.15) !important;
+}
+
+menuitem,
+menu,
+.urlbarView-row {
+  border-radius: 2px !important;
+}
