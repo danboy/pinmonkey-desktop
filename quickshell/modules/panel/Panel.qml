@@ -50,6 +50,8 @@ Variants {
                 anchors.right: parent.right
                 anchors.rightMargin: Config.appletSpacing
 
+                RecordingIndicator {}
+
                 SystemTray {}
 
                 ControlCenter {

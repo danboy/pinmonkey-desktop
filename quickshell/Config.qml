@@ -87,4 +87,8 @@ Singleton {
     readonly property int settingsNavWidth: 140
     readonly property int settingsTabHeight: 36
     readonly property int settingsRowHeight: 52
+    // --- Screenshot panel ---
+    readonly property int screenshotWidth: 360
+    readonly property int screenshotModeButtonHeight: 64
+    readonly property int screenshotCaptureButtonHeight: 40
 }

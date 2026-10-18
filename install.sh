@@ -29,7 +29,7 @@ install_packages() {
     sudo pacman -S --needed --noconfirm \
         niri quickshell qt5ct qt6ct qt6-wayland polkit \
         brightnessctl playerctl networkmanager bluez upower \
-        pipewire pipewire-pulse wireplumber
+        pipewire pipewire-pulse wireplumber wf-recorder libnotify
     log "note: GDM is only required for the power menu's \"Switch user\" action (not installed by this script)"
 }
 
