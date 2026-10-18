@@ -9,6 +9,37 @@ import qs.modules.services
 Item {
     id: root
 
+    readonly property var sections: [
+        {
+            id: "network",
+            label: "Network"
+        },
+        {
+            id: "bluetooth",
+            label: "Bluetooth"
+        },
+        {
+            id: "sound",
+            label: "Sound"
+        },
+        {
+            id: "display",
+            label: "Display"
+        },
+        {
+            id: "keyboard",
+            label: "Keyboard"
+        },
+        {
+            id: "mouse",
+            label: "Mouse"
+        },
+        {
+            id: "tablet",
+            label: "Tablet"
+        }
+    ]
+
     function close() {
         SettingsState.open = false;
     }
@@ -85,29 +116,23 @@ Item {
                         anchors.fill: parent
                     }
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
                         anchors.margins: Config.popupMargin
                         spacing: Config.spacingLarge
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: Config.spacingSmall
+                        ColumnLayout {
+                            Layout.preferredWidth: Config.settingsNavWidth
+                            Layout.minimumWidth: Config.settingsNavWidth
+                            Layout.maximumWidth: Config.settingsNavWidth
+                            Layout.fillHeight: true
+                            spacing: Config.spacingXSmall
 
                             Repeater {
-                                model: [
-                                    {
-                                        id: "network",
-                                        label: "Network"
-                                    },
-                                    {
-                                        id: "bluetooth",
-                                        label: "Bluetooth"
-                                    }
-                                ]
+                                model: root.sections
 
                                 delegate: Rectangle {
-                                    id: tabButton
+                                    id: navButton
 
                                     required property var modelData
                                     readonly property bool active: SettingsState.tab === modelData.id
@@ -115,38 +140,78 @@ Item {
                                     Layout.fillWidth: true
                                     implicitHeight: Config.settingsTabHeight
                                     radius: Config.radiusMedium
-                                    color: tabButton.active ? Config.colAccent : Config.colSurfaceVariant
+                                    color: navButton.active ? Config.colAccent : "transparent"
                                     border.width: Config.borderWidth
-                                    border.color: tabButton.active ? Config.colBorderAccent : Config.colBorder
+                                    border.color: navButton.active ? Config.colBorderAccent : "transparent"
 
                                     Text {
-                                        anchors.centerIn: parent
-                                        text: tabButton.modelData.label
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: Config.spacingMedium
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: navButton.modelData.label
                                         font.family: Config.fontFamily
-                                        font.bold: true
+                                        font.bold: navButton.active
                                         font.pixelSize: Config.fontSizeCaption
-                                        color: tabButton.active ? Config.colAccentText : Config.colText
+                                        color: navButton.active ? Config.colAccentText : Config.colText
                                     }
 
                                     MouseArea {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
-                                        onClicked: SettingsState.tab = tabButton.modelData.id
+                                        onClicked: SettingsState.tab = navButton.modelData.id
                                     }
                                 }
                             }
+
+                            Item {
+                                Layout.fillHeight: true
+                            }
                         }
 
-                        NetworkSettings {
-                            Layout.fillWidth: true
+                        Rectangle {
                             Layout.fillHeight: true
-                            visible: SettingsState.tab === "network"
+                            implicitWidth: Config.borderWidth
+                            color: Config.colDivider
                         }
 
-                        BluetoothSettings {
+                        Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            visible: SettingsState.tab === "bluetooth"
+
+                            NetworkSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "network"
+                            }
+
+                            BluetoothSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "bluetooth"
+                            }
+
+                            SoundSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "sound"
+                            }
+
+                            DisplaySettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "display"
+                            }
+
+                            KeyboardSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "keyboard"
+                            }
+
+                            MouseSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "mouse"
+                            }
+
+                            TabletSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "tablet"
+                            }
                         }
                     }
                 }

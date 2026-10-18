@@ -82,8 +82,9 @@ Singleton {
     // --- Weather ---
     readonly property int weatherForecastDays: 4
     // --- Settings panel ---
-    readonly property int settingsWidth: 420
-    readonly property int settingsHeight: 480
+    readonly property int settingsWidth: 580
+    readonly property int settingsHeight: 520
+    readonly property int settingsNavWidth: 140
     readonly property int settingsTabHeight: 36
     readonly property int settingsRowHeight: 52
 }
