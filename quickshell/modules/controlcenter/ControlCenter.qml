@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs
 import qs.modules.components
@@ -44,6 +45,14 @@ Rectangle {
         }
     }
 
+    // TEMP: debug-only, remove before committing.
+    IpcHandler {
+        target: "debugcc"
+        function toggle(): void {
+            popup.visible = !popup.visible;
+        }
+    }
+
     AnchoredPopup {
         id: popup
 
@@ -66,7 +75,12 @@ Rectangle {
             }
 
             IconToggle {
+                // PowerMenu's own power icon sits inset by spacingSmall from the top of its
+                // header row (see PowerMenu.qml's header RowLayout margins) - match that
+                // offset here since this button is a sibling of PowerMenu, not inside its
+                // header, so it isn't inset by the same margins automatically.
                 Layout.alignment: Qt.AlignTop
+                Layout.topMargin: Config.spacingSmall
                 implicitWidth: Config.tileIconBoxSize
                 implicitHeight: Config.tileIconBoxSize
                 iconName: "preferences-system-symbolic"
