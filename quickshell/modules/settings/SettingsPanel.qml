@@ -41,6 +41,10 @@ Item {
         {
             id: "tablet",
             label: "Tablet"
+        },
+        {
+            id: "lockscreen",
+            label: "Lock Screen"
         }
     ]
 
@@ -220,6 +224,11 @@ Item {
                             TabletSettings {
                                 anchors.fill: parent
                                 visible: SettingsState.tab === "tablet"
+                            }
+
+                            LockScreenSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "lockscreen"
                             }
                         }
                     }

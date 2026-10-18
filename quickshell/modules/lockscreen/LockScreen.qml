@@ -12,6 +12,20 @@ import qs.modules.services
 Item {
     id: root
 
+    // Shared by the "lock" IPC target and the idle-timeout auto-lock below, so both close
+    // other popups first (see the comment on the IpcHandler's lock() for why that matters).
+    function lockSession() {
+        PopupCoordinator.closeAll();
+        sessionLock.locked = true;
+    }
+
+    IdleMonitor {
+        enabled: ShellSettings.idleLockEnabled
+        timeout: ShellSettings.idleLockMinutes * 60
+        onIsIdleChanged: if (isIdle && !sessionLock.locked)
+            root.lockSession()
+    }
+
     WlSessionLock {
         id: sessionLock
 
@@ -218,8 +232,7 @@ Item {
         // in-process, before locking so this can't happen - an execDetached IPC round-trip
         // here would be async and could lose the race against the very next line.
         function lock(): void {
-            PopupCoordinator.closeAll();
-            sessionLock.locked = true;
+            root.lockSession();
         }
 
         function unlock(): void {
