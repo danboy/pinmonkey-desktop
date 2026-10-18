@@ -88,9 +88,25 @@ Item {
     // a post-capture notification.
     function captureNiri(command) {
         root.close();
-        captureProcess.command = command;
-        captureProcess.running = true;
-        notifyTimer.start();
+        // Closing the panel doesn't unmap the Wayland surface instantly - the compositor
+        // needs a moment to actually repaint without it. Running the capture in the same
+        // tick grabbed a frame with the panel still on screen, baking it into the
+        // screenshot. A short delay gives the unmap time to land first.
+        captureTimer.pendingCommand = command;
+        captureTimer.start();
+    }
+
+    Timer {
+        id: captureTimer
+
+        property var pendingCommand: null
+        interval: 120
+        repeat: false
+        onTriggered: {
+            captureProcess.command = pendingCommand;
+            captureProcess.running = true;
+            notifyTimer.start();
+        }
     }
 
     Timer {
