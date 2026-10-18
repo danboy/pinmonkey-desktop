@@ -18,6 +18,11 @@ Singleton {
     property bool mouseLeftHanded: false
     property string mouseAccelProfile: ""
     property real mouseAccelSpeed: 0
+    property bool touchpadTapToClick: false
+    property bool touchpadNaturalScroll: false
+    property bool touchpadDisableWhileTyping: false
+    property string touchpadAccelProfile: ""
+    property real touchpadAccelSpeed: 0
     property bool tabletConfigured: false
     property string tabletOutput: ""
 
@@ -54,7 +59,8 @@ Singleton {
     }
 
     function flagValue(blockContent, name) {
-        const m = blockContent.match(new RegExp(`^\\s*(?:// *)?${name}\\s+"?([^"\\n]*)"?\\s*$`, "m"));
+        // [ \t]+ (not \s+) so this can never cross a newline into the next line's content.
+        const m = blockContent.match(new RegExp(`^[ \\t]*(?:// *)?${name}[ \\t]+"?([^"\\n]*)"?[ \\t]*$`, "m"));
         return m ? m[1] : "";
     }
 
@@ -66,6 +72,12 @@ Singleton {
         root.mouseLeftHanded = root.hasFlag(mouseBlock, "left-handed");
         root.mouseAccelProfile = root.flagValue(mouseBlock, "accel-profile") || "adaptive";
         root.mouseAccelSpeed = parseFloat(root.flagValue(mouseBlock, "accel-speed")) || 0;
+        const touchpadBlock = root.blockText(text, "touchpad");
+        root.touchpadTapToClick = root.hasFlag(touchpadBlock, "tap");
+        root.touchpadNaturalScroll = root.hasFlag(touchpadBlock, "natural-scroll");
+        root.touchpadDisableWhileTyping = root.hasFlag(touchpadBlock, "dwt");
+        root.touchpadAccelProfile = root.flagValue(touchpadBlock, "accel-profile") || "adaptive";
+        root.touchpadAccelSpeed = parseFloat(root.flagValue(touchpadBlock, "accel-speed")) || 0;
         const tabletBlock = root.findBlock(text, "tablet");
         root.tabletConfigured = tabletBlock !== null;
         root.tabletOutput = root.flagValue(root.blockText(text, "tablet"), "map-to-output");

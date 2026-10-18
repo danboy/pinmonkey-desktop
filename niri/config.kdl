@@ -23,16 +23,15 @@ input {
         }
 
         // Enable numlock on startup, omitting this setting disables it.
-        numlock
-    }
+        // numlock}
 
     // Next sections include libinput settings.
     // Omitting settings disables them, or leaves them at their default values.
     // All commented-out settings here are examples, not defaults.
     touchpad {
         // off
-        //tap
-        // dwt
+        tap
+        dwt
         // dwtp
         // drag false
         // drag-lock

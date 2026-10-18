@@ -35,6 +35,10 @@ Item {
             label: "Mouse"
         },
         {
+            id: "touchpad",
+            label: "Touchpad"
+        },
+        {
             id: "tablet",
             label: "Tablet"
         }
@@ -206,6 +210,11 @@ Item {
                             MouseSettings {
                                 anchors.fill: parent
                                 visible: SettingsState.tab === "mouse"
+                            }
+
+                            TouchpadSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "touchpad"
                             }
 
                             TabletSettings {
