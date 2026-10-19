@@ -57,11 +57,7 @@ ColumnLayout {
         }
     }
 
-    Rectangle {
-        Layout.fillWidth: true
-        implicitHeight: Config.borderWidth
-        color: Config.colDivider
-    }
+    Divider {}
 
     Rectangle {
         Layout.fillWidth: true

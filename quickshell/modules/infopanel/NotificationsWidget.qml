@@ -1,8 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
 import qs
+import qs.modules.components
 import qs.modules.services
 
 ColumnLayout {
@@ -60,51 +59,11 @@ ColumnLayout {
             border.width: Config.borderWidth
             border.color: Config.colBorder
 
-            RowLayout {
+            NotificationRow {
                 anchors.fill: parent
                 anchors.margins: Config.spacingSmall
-                spacing: Config.spacingSmall
-
-                IconImage {
-                    source: Quickshell.iconPath(modelData.appIcon, "dialog-information-symbolic")
-                    implicitSize: Config.iconSizeMedium
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    Text {
-                        Layout.fillWidth: true
-                        text: modelData.summary
-                        elide: Text.ElideRight
-                        font.family: Config.fontFamily
-                        font.bold: true
-                        font.pixelSize: Config.fontSizeCaption
-                        color: Config.colText
-                    }
-
-                    Text {
-                        Layout.fillWidth: true
-                        visible: modelData.body.length > 0
-                        text: modelData.body
-                        elide: Text.ElideRight
-                        font.family: Config.fontFamily
-                        font.pixelSize: Config.fontSizeCaption
-                        color: Config.colSubtext
-                    }
-                }
-
-                IconImage {
-                    source: Quickshell.iconPath("window-close-symbolic", "window-close")
-                    implicitSize: Config.iconSizeSmall
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: modelData.dismiss()
-                    }
-                }
+                notification: modelData
+                onCloseClicked: modelData.dismiss()
             }
         }
     }

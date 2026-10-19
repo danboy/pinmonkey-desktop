@@ -11,7 +11,11 @@ Singleton {
     readonly property alias trackedNotifications: server.trackedNotifications
 
     function clearAll() {
-        for (const n of server.trackedNotifications.values)
+        // Snapshot first - dismiss() removes its notification from trackedNotifications.values
+        // immediately, so iterating that live array directly skips every other entry as it
+        // shifts out from under the loop.
+        const all = [...server.trackedNotifications.values];
+        for (const n of all)
             n.dismiss();
     }
 

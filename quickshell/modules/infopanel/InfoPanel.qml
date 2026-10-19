@@ -42,6 +42,7 @@ Rectangle {
 
         anchorItem: root
         implicitWidth: Config.infoPanelWidth
+        minimumContentHeight: Config.infoPanelHeight
         onVisibleChanged: NotificationToast.suppressed = visible
 
         Connections {
@@ -53,18 +54,26 @@ Rectangle {
 
         WeatherWidget {}
 
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: Config.borderWidth
-            color: Config.colDivider
+        Item {
+            Layout.fillHeight: true
+        }
+
+        Divider {}
+
+        Item {
+            Layout.fillHeight: true
         }
 
         CalendarWidget {}
 
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: Config.borderWidth
-            color: Config.colDivider
+        Item {
+            Layout.fillHeight: true
+        }
+
+        Divider {}
+
+        Item {
+            Layout.fillHeight: true
         }
 
         NotificationsWidget {}

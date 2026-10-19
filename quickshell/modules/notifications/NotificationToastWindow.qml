@@ -1,9 +1,8 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Widgets
 import qs
+import qs.modules.components
 import qs.modules.services
 
 Variants {
@@ -43,55 +42,15 @@ Variants {
                 onClicked: NotificationToast.hide()
             }
 
-            RowLayout {
+            NotificationRow {
                 id: content
 
                 anchors.fill: parent
                 anchors.margins: Config.popupMargin
-                spacing: Config.spacingSmall
-
-                IconImage {
-                    source: Quickshell.iconPath(NotificationToast.notification?.appIcon ?? "", "dialog-information-symbolic")
-                    implicitSize: Config.iconSizeMedium
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    Text {
-                        Layout.fillWidth: true
-                        text: NotificationToast.notification?.summary ?? ""
-                        elide: Text.ElideRight
-                        font.family: Config.fontFamily
-                        font.bold: true
-                        font.pixelSize: Config.fontSizeCaption
-                        color: Config.colText
-                    }
-
-                    Text {
-                        Layout.fillWidth: true
-                        visible: (NotificationToast.notification?.body ?? "").length > 0
-                        text: NotificationToast.notification?.body ?? ""
-                        elide: Text.ElideRight
-                        wrapMode: Text.WordWrap
-                        maximumLineCount: 2
-                        font.family: Config.fontFamily
-                        font.pixelSize: Config.fontSizeCaption
-                        color: Config.colSubtext
-                    }
-                }
-
-                IconImage {
-                    source: Quickshell.iconPath("window-close-symbolic", "window-close")
-                    implicitSize: Config.iconSizeSmall
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: NotificationToast.hide()
-                    }
-                }
+                notification: NotificationToast.notification
+                bodyWrapMode: Text.WordWrap
+                bodyMaximumLineCount: 2
+                onCloseClicked: NotificationToast.hide()
             }
         }
     }

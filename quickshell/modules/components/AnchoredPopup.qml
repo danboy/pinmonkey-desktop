@@ -10,9 +10,13 @@ PopupWindow {
     property Item anchorItem
     default property alias content: contentLayout.data
     property alias contentSpacing: contentLayout.spacing
+    // Lets a popup claim more vertical room than its content needs (e.g. so children can
+    // space-between into the slack) without risking clipped content if it ever grows past
+    // this - content height always wins via the max().
+    property int minimumContentHeight: 0
 
     implicitWidth: Config.popupWidth
-    implicitHeight: contentLayout.implicitHeight + Config.popupMargin * 2
+    implicitHeight: Math.max(contentLayout.implicitHeight, minimumContentHeight) + Config.popupMargin * 2
     color: "transparent"
     visible: false
     grabFocus: true

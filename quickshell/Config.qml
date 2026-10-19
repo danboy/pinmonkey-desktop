@@ -52,6 +52,7 @@ Singleton {
     readonly property int launcherIconSize: 28
     readonly property int launcherSearchHeight: 42
     readonly property int infoPanelWidth: 380
+    readonly property int infoPanelHeight: 420
     readonly property int calendarCellSize: 32
     readonly property int notificationRowHeight: 52
     readonly property int weatherRefreshIntervalMs: 15 * 60 * 1000

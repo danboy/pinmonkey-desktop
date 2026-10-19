@@ -18,11 +18,7 @@ ColumnLayout {
         onToggled: ShellSettings.notificationsDndEnabled = !ShellSettings.notificationsDndEnabled
     }
 
-    Rectangle {
-        Layout.fillWidth: true
-        implicitHeight: Config.borderWidth
-        color: Config.colDivider
-    }
+    Divider {}
 
     Text {
         Layout.fillWidth: true

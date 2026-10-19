@@ -83,11 +83,7 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: Config.borderWidth
-            color: Config.colDivider
-        }
+        Divider {}
 
         RowLayout {
             Layout.fillWidth: true

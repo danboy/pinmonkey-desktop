@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import qs
+import qs.modules.components
 
 // Controls niri's live (temporary, not config.kdl-persisted) output settings via
 // `niri msg output`. These reset if the output configuration in config.kdl later changes -
@@ -149,11 +150,7 @@ ColumnLayout {
                 }
             }
 
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: Config.borderWidth
-                color: Config.colDivider
-            }
+            Divider {}
         }
     }
 }
