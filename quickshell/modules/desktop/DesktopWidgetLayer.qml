@@ -45,7 +45,10 @@ Item {
             layer: WlrLayer.Overlay
             namespace: "desktop-widgets"
             color: "transparent"
-            keyboardFocus: WlrKeyboardFocus.OnDemand
+            // None, not OnDemand: these widgets take no text input, and an OnDemand grab
+            // eats the first click elsewhere (e.g. the bar's toggle icon) just to release
+            // focus, forcing a second click to actually register - that was the two-click bug.
+            keyboardFocus: WlrKeyboardFocus.None
 
             anchors {
                 top: true
@@ -59,11 +62,10 @@ Item {
             // itself while open, since it extends over that strip too.
             margins.top: Config.barHeight
 
-            FocusScope {
+            Item {
                 id: focusScope
 
                 anchors.fill: parent
-                focus: true
                 opacity: DesktopWidgetsState.open ? 1 : 0
                 scale: DesktopWidgetsState.open ? 1 : 0.96
 
@@ -80,8 +82,6 @@ Item {
                         easing.type: Easing.OutCubic
                     }
                 }
-
-                Keys.onEscapePressed: DesktopWidgetsState.open = false
 
                 Repeater {
                     model: ShellSettings.desktopWidgets

@@ -2,6 +2,7 @@ import QtQuick // for Text
 import QtQuick.Layouts
 import Quickshell // for PanelWindow
 import Quickshell.Wayland
+import Quickshell.Widgets
 import qs
 import qs.modules.components
 import qs.modules.controlcenter
@@ -52,13 +53,27 @@ Variants {
                 anchors.left: parent.left
                 anchors.leftMargin: Config.appletSpacing
 
-                IconToggle {
-                    implicitWidth: Config.tileIconBoxSize
-                    implicitHeight: Config.tileIconBoxSize
-                    iconName: "view-grid-symbolic"
-                    iconFallback: "view-grid"
-                    on: DesktopWidgetsState.open
-                    onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
+                Rectangle {
+                    id: widgetToggle
+
+                    implicitWidth: Config.pillHeight
+                    implicitHeight: Config.pillHeight
+                    radius: Config.radiusPill
+                    color: DesktopWidgetsState.open ? Config.colAccent : Config.colSurfaceVariant
+                    border.width: Config.borderWidth
+                    border.color: DesktopWidgetsState.open ? Config.colBorderAccent : Config.colBorder
+
+                    IconImage {
+                        anchors.centerIn: parent
+                        source: Quickshell.iconPath("view-grid-symbolic", "view-grid")
+                        implicitSize: Config.iconSizeMedium
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
+                    }
                 }
 
                 Rectangle {
