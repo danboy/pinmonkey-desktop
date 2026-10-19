@@ -46,6 +46,11 @@ Item {
                 right: true
             }
 
+            // Leaves the bar's own row uncovered - without this, this surface (Overlay layer,
+            // stacked above the bar's Top layer) swallows clicks on the bar's toggle icon
+            // itself while open, since it extends over that strip too.
+            margins.top: Config.barHeight
+
             FocusScope {
                 id: focusScope
 

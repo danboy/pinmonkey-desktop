@@ -15,6 +15,7 @@ ColumnLayout {
 
         Text {
             Layout.fillWidth: true
+            elide: Text.ElideRight
             text: "Notifications"
             font.family: Config.fontFamily
             font.bold: true
@@ -46,13 +47,20 @@ ColumnLayout {
         color: Config.colSubtext
     }
 
-    Repeater {
+    ListView {
+        id: list
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.min(list.contentHeight, Config.notificationsListMaxHeight)
+        clip: true
+        spacing: Config.spacingSmall
+        boundsBehavior: Flickable.StopAtBounds
         model: Notifications.trackedNotifications
 
         delegate: Rectangle {
             required property var modelData
 
-            Layout.fillWidth: true
+            width: list.width
             implicitHeight: Config.notificationRowHeight
             radius: Config.radiusSmall
             color: Config.colSurfaceVariant

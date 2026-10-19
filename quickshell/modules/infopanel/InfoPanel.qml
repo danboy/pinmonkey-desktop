@@ -52,30 +52,41 @@ Rectangle {
             }
         }
 
-        WeatherWidget {}
-
-        Item {
+        RowLayout {
+            Layout.fillWidth: true
             Layout.fillHeight: true
+            spacing: Config.spacingLarge
+
+            ColumnLayout {
+                Layout.preferredWidth: Config.infoPanelLeftColumnWidth
+                Layout.fillHeight: true
+                spacing: Config.spacingSmall
+
+                WeatherWidget {}
+
+                Item {
+                    Layout.fillHeight: true
+                }
+
+                Divider {}
+
+                Item {
+                    Layout.fillHeight: true
+                }
+
+                CalendarWidget {}
+            }
+
+            Rectangle {
+                Layout.fillHeight: true
+                implicitWidth: Config.borderWidth
+                color: Config.colDivider
+            }
+
+            NotificationsWidget {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignTop
+            }
         }
-
-        Divider {}
-
-        Item {
-            Layout.fillHeight: true
-        }
-
-        CalendarWidget {}
-
-        Item {
-            Layout.fillHeight: true
-        }
-
-        Divider {}
-
-        Item {
-            Layout.fillHeight: true
-        }
-
-        NotificationsWidget {}
     }
 }
