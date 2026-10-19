@@ -1,7 +1,7 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import qs.modules.infopanel
+import qs.modules.widgets
 
 // Single source of truth for "what widget types exist" - shared by the lock screen grid,
 // the desktop widget layer, and both of their settings editors, so adding a new widget

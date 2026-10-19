@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -71,10 +70,10 @@ Item {
             // the Loader above - it's destroyed on close, so this fires again on every open),
             // before this surface itself has presented a frame. That ordering is what keeps it
             // from capturing itself: a live capture would re-blur its own previous frame every
-            // tick, smearing into a feedback loop instead of a crisp backdrop.
-            // Deferred a tick (Qt.callLater) - called straight from onCompleted, the view's
-            // recording context isn't realized yet and the capture silently fails.
-            Component.onCompleted: Qt.callLater(backdropCapture.captureFrame)
+            // tick, smearing into a feedback loop instead of a crisp backdrop. BlurredBackdrop
+            // defers the actual capture a tick (Qt.callLater) - called straight from
+            // onCompleted, the view's recording context isn't realized yet and it silently fails.
+            Component.onCompleted: blur.capture()
 
             Item {
                 id: focusScope
@@ -97,37 +96,18 @@ Item {
                     }
                 }
 
-                // Real blur of the actual desktop/windows behind this overlay, done client-side
-                // since niri's own background-effect blur (ext-background-effect-v1) only
-                // samples its wallpaper/backdrop layer, not windows stacked below it - see the
-                // Component.onCompleted above for why this is a still frame, not a live feed.
-                // ScreencopyView has no source-rect/position awareness of its own (see
-                // qs::wayland::screencopy::ScreencopyView::paint) - it always stretches the
-                // *entire* captured frame to fill its own item bounds. Since this surface is
-                // inset from the real screen by margins.top (Config.barHeight), anchors.fill
-                // would squeeze the whole screen - panel strip included - into the shorter
-                // item, shifting everything down and letterboxing the sides. Instead size this
-                // to the real screen 1:1 and shift it up by the same margin the surface was
-                // inset by, so the captured frame lines back up pixel-for-pixel; the portion
-                // above y:0 (the panel strip) simply falls outside the surface and is clipped.
-                ScreencopyView {
-                    id: backdropCapture
+                // See BlurredBackdrop.qml for why this is a one-shot still frame (captured by
+                // the Component.onCompleted above) rather than a live feed, and why it needs
+                // topInset: this surface is inset from the real screen by the bar's exclusive
+                // zone, and ScreencopyView always stretches its full-screen capture to fill its
+                // own item bounds, so without correcting for that inset the capture would
+                // squeeze the whole screen - panel strip included - into the shorter item.
+                BlurredBackdrop {
+                    id: blur
 
-                    x: 0
-                    y: -Config.barHeight
-                    width: widgetSurface.screen.width
-                    height: widgetSurface.screen.height
-                    live: false
-                    captureSource: widgetSurface.screen
-                }
-
-                MultiEffect {
-                    anchors.fill: backdropCapture
-                    source: backdropCapture
-                    blurEnabled: true
-                    blur: 1
-                    blurMax: 64
-                    autoPaddingEnabled: false
+                    anchors.fill: parent
+                    surface: widgetSurface
+                    topInset: Config.barHeight
                 }
 
                 // Light scrim on top of the blur for text legibility.

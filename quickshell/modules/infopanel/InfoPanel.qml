@@ -4,6 +4,7 @@ import Quickshell
 import qs
 import qs.modules.components
 import qs.modules.services
+import qs.modules.widgets
 
 Rectangle {
     id: root
