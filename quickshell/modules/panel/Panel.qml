@@ -51,7 +51,7 @@ Variants {
                 spacing: Config.appletSpacing
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: Config.appletSpacing
+                anchors.leftMargin: 2
 
                 Rectangle {
                     id: widgetToggle
@@ -74,6 +74,7 @@ Variants {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
                     }
+
                 }
 
                 Rectangle {
@@ -110,7 +111,7 @@ Variants {
                 spacing: Config.appletSpacing
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Config.appletSpacing
+                anchors.rightMargin: 2
 
                 RecordingIndicator {
                 }
