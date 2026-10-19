@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -41,6 +42,8 @@ Item {
         active: closeDelay.active
 
         sourceComponent: WlrLayershell {
+            id: widgetSurface
+
             screen: Quickshell.screens[0]
             layer: WlrLayer.Overlay
             namespace: "desktop-widgets"
@@ -62,6 +65,15 @@ Item {
             // itself while open, since it extends over that strip too.
             margins.top: Config.barHeight
 
+            // One-shot screen capture, taken fresh each time this surface is (re)created (see
+            // the Loader above - it's destroyed on close, so this fires again on every open),
+            // before this surface itself has presented a frame. That ordering is what keeps it
+            // from capturing itself: a live capture would re-blur its own previous frame every
+            // tick, smearing into a feedback loop instead of a crisp backdrop.
+            // Deferred a tick (Qt.callLater) - called straight from onCompleted, the view's
+            // recording context isn't realized yet and the capture silently fails.
+            Component.onCompleted: Qt.callLater(backdropCapture.captureFrame)
+
             Item {
                 id: focusScope
 
@@ -81,6 +93,32 @@ Item {
                         duration: Config.animationDurationMs
                         easing.type: Easing.OutCubic
                     }
+                }
+
+                // Real blur of the actual desktop/windows behind this overlay, done client-side
+                // since niri's own background-effect blur (ext-background-effect-v1) only
+                // samples its wallpaper/backdrop layer, not windows stacked below it - see the
+                // Component.onCompleted above for why this is a still frame, not a live feed.
+                ScreencopyView {
+                    id: backdropCapture
+
+                    anchors.fill: parent
+                    live: false
+                    captureSource: widgetSurface.screen
+                }
+
+                MultiEffect {
+                    anchors.fill: parent
+                    source: backdropCapture
+                    blurEnabled: true
+                    blur: 1
+                    blurMax: 64
+                }
+
+                // Light scrim on top of the blur for text legibility.
+                Rectangle {
+                    anchors.fill: parent
+                    color: Qt.rgba(0, 0, 0, Config.desktopWidgetScrimOpacity)
                 }
 
                 Repeater {

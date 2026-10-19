@@ -90,6 +90,7 @@ Singleton {
     readonly property int desktopWidgetDefaultHeight: 200
     readonly property int desktopWidgetMinSize: 120
     readonly property int desktopWidgetResizeHandleSize: 18
+    readonly property real desktopWidgetScrimOpacity: 0.2
     // --- Weather ---
     readonly property int weatherForecastDays: 4
     // --- Settings panel ---
