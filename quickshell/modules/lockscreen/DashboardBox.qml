@@ -4,15 +4,14 @@ import qs
 
 // Mirrors pinmonkey's dash "Box": a sharp-cornered, full-opacity-border cell in an
 // equal-width row, unlike the rounded/low-opacity-border popup cards used elsewhere.
-// Fixed size (not content-sized) so the dashboard grid stays uniform - content taller than
-// the box (e.g. a long notification list) is clipped rather than growing the cell.
+// Sized by whatever GridLayout parent places it (see LockGrid.qml) rather than a fixed
+// size of its own - content taller than the cell (e.g. a long notification list) is
+// clipped rather than growing the cell.
 Rectangle {
     id: root
 
     default property alias content: inner.data
 
-    Layout.preferredWidth: Config.lockBoxWidth
-    Layout.preferredHeight: Config.lockBoxHeight
     clip: true
     color: "transparent"
     border.width: Config.borderWidth

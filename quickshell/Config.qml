@@ -53,6 +53,7 @@ Singleton {
     readonly property int launcherSearchHeight: 42
     readonly property int infoPanelWidth: 380
     readonly property int infoPanelHeight: 420
+    readonly property int panelWindowTitleMaxWidth: 320
     readonly property int calendarCellSize: 32
     readonly property int notificationRowHeight: 52
     readonly property int weatherRefreshIntervalMs: 15 * 60 * 1000
@@ -78,9 +79,13 @@ Singleton {
     readonly property int lockClockFontSize: 64
     readonly property int lockDateFontSize: 20
     readonly property int lockPasswordFieldWidth: 220
-    readonly property int lockDashboardWidth: popupWidth * 2
-    readonly property int lockBoxWidth: (lockDashboardWidth - spacingLarge) / 2
-    readonly property int lockBoxHeight: 240
+    readonly property int lockGridColumns: 3
+    readonly property int lockGridMargin: spacingXLarge
+    // --- Desktop widgets ---
+    readonly property int desktopWidgetDefaultWidth: 280
+    readonly property int desktopWidgetDefaultHeight: 200
+    readonly property int desktopWidgetMinSize: 120
+    readonly property int desktopWidgetResizeHandleSize: 18
     // --- Weather ---
     readonly property int weatherForecastDays: 4
     // --- Settings panel ---

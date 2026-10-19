@@ -98,6 +98,7 @@ Rectangle {
             spacing: Config.spacingSmall
 
             DndToggle {}
+            StayAwakeToggle {}
         }
 
         VolumeControl {}

@@ -7,6 +7,7 @@ import qs.modules.notifications
 import qs.modules.lockscreen
 import qs.modules.settings
 import qs.modules.screenshot
+import qs.modules.desktop
 
 ShellRoot {
         id: root
@@ -17,4 +18,5 @@ ShellRoot {
         LockScreen {}
         SettingsPanel {}
         ScreenshotPanel {}
+        DesktopWidgetLayer {}
 }

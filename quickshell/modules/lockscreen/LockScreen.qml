@@ -6,7 +6,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
 import qs
-import qs.modules.infopanel
 import qs.modules.services
 
 Item {
@@ -34,15 +33,23 @@ Item {
         active: ShellSettings.loaded
 
         sourceComponent: IdleMonitor {
-            enabled: ShellSettings.idleLockEnabled
+            enabled: ShellSettings.idleLockEnabled && !ShellSettings.stayAwakeEnabled
             timeout: ShellSettings.idleLockMinutes * 60
             onIsIdleChanged: if (isIdle && !sessionLock.locked)
                 root.lockSession()
         }
 
+        // Forces a fresh IdleMonitor on every change, not just idleLockMinutes - see the
+        // comment above the Loader: a live property change on an existing IdleMonitor doesn't
+        // reliably reach the underlying ext-idle-notify-v1 object, confirmed for `timeout`
+        // and not worth re-testing per-property here given how it fails silently.
         Connections {
             target: ShellSettings
             function onIdleLockMinutesChanged() {
+                idleLoader.active = false;
+                idleLoader.active = true;
+            }
+            function onStayAwakeEnabledChanged() {
                 idleLoader.active = false;
                 idleLoader.active = true;
             }
@@ -124,7 +131,8 @@ Item {
             }
 
             ColumnLayout {
-                anchors.centerIn: parent
+                anchors.fill: parent
+                anchors.margins: Config.lockGridMargin
                 spacing: Config.spacingXLarge
 
                 ColumnLayout {
@@ -149,51 +157,9 @@ Item {
                     }
                 }
 
-                ColumnLayout {
-                    id: dashboard
-
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.preferredWidth: Config.lockDashboardWidth
-                    spacing: Config.spacingLarge
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Config.spacingLarge
-
-                        DashboardBox {
-                            WeatherWidget {}
-                        }
-
-                        DashboardBox {
-                            NewsWidget {}
-                        }
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Config.spacingLarge
-
-                        DashboardBox {
-                            HolidayWidget {}
-                        }
-
-                        DashboardBox {
-                            TransitWidget {}
-                        }
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Config.spacingLarge
-
-                        DashboardBox {
-                            CalendarWidget {}
-                        }
-
-                        DashboardBox {
-                            NotificationsWidget {}
-                        }
-                    }
+                LockGrid {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
 
                 ColumnLayout {

@@ -49,6 +49,14 @@ Item {
         {
             id: "lockscreen",
             label: "Lock Screen"
+        },
+        {
+            id: "lockgrid",
+            label: "Lock Screen Grid"
+        },
+        {
+            id: "desktopwidgets",
+            label: "Desktop Widgets"
         }
     ]
 
@@ -238,6 +246,16 @@ Item {
                             LockScreenSettings {
                                 anchors.fill: parent
                                 visible: SettingsState.tab === "lockscreen"
+                            }
+
+                            LockGridSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "lockgrid"
+                            }
+
+                            DesktopWidgetSettings {
+                                anchors.fill: parent
+                                visible: SettingsState.tab === "desktopwidgets"
                             }
                         }
                     }

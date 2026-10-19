@@ -3,8 +3,10 @@ import QtQuick.Layouts
 import Quickshell // for PanelWindow
 import Quickshell.Wayland
 import qs
+import qs.modules.components
 import qs.modules.controlcenter
 import qs.modules.infopanel
+import qs.modules.services
 
 Variants {
     model: Quickshell.screens
@@ -40,6 +42,34 @@ Variants {
 
             InfoPanel {
                 anchors.centerIn: parent
+            }
+
+            RowLayout {
+                id: leftLayout
+
+                spacing: Config.appletSpacing
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: Config.appletSpacing
+
+                IconToggle {
+                    implicitWidth: Config.tileIconBoxSize
+                    implicitHeight: Config.tileIconBoxSize
+                    iconName: "view-grid-symbolic"
+                    iconFallback: "view-grid"
+                    on: DesktopWidgetsState.open
+                    onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
+                }
+
+                Text {
+                    Layout.maximumWidth: Config.panelWindowTitleMaxWidth
+                    elide: Text.ElideRight
+                    text: ActiveWindow.title
+                    font.family: Config.fontFamily
+                    font.pixelSize: Config.fontSizeCaption
+                    color: Config.colSubtext
+                }
+
             }
 
             RowLayout {
