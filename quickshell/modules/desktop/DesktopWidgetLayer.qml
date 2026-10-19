@@ -60,10 +60,12 @@ Item {
                 right: true
             }
 
-            // Leaves the bar's own row uncovered - without this, this surface (Overlay layer,
-            // stacked above the bar's Top layer) swallows clicks on the bar's toggle icon
-            // itself while open, since it extends over that strip too.
-            margins.top: Config.barHeight
+            // Panel.qml's Top-layer surface auto-reserves an exclusive zone of Config.barHeight
+            // (anchored to one edge only, default exclusionMode), and niri insets this
+            // all-edges-anchored Overlay surface by that exclusive zone on its own - no margin
+            // needed here. An explicit margins.top: Config.barHeight on top of that double-
+            // counted the bar height, leaving a bar-height band of raw, unblurred desktop
+            // exposed between the real bar and where the blur actually started.
 
             // One-shot screen capture, taken fresh each time this surface is (re)created (see
             // the Loader above - it's destroyed on close, so this fires again on every open),
@@ -99,20 +101,33 @@ Item {
                 // since niri's own background-effect blur (ext-background-effect-v1) only
                 // samples its wallpaper/backdrop layer, not windows stacked below it - see the
                 // Component.onCompleted above for why this is a still frame, not a live feed.
+                // ScreencopyView has no source-rect/position awareness of its own (see
+                // qs::wayland::screencopy::ScreencopyView::paint) - it always stretches the
+                // *entire* captured frame to fill its own item bounds. Since this surface is
+                // inset from the real screen by margins.top (Config.barHeight), anchors.fill
+                // would squeeze the whole screen - panel strip included - into the shorter
+                // item, shifting everything down and letterboxing the sides. Instead size this
+                // to the real screen 1:1 and shift it up by the same margin the surface was
+                // inset by, so the captured frame lines back up pixel-for-pixel; the portion
+                // above y:0 (the panel strip) simply falls outside the surface and is clipped.
                 ScreencopyView {
                     id: backdropCapture
 
-                    anchors.fill: parent
+                    x: 0
+                    y: -Config.barHeight
+                    width: widgetSurface.screen.width
+                    height: widgetSurface.screen.height
                     live: false
                     captureSource: widgetSurface.screen
                 }
 
                 MultiEffect {
-                    anchors.fill: parent
+                    anchors.fill: backdropCapture
                     source: backdropCapture
                     blurEnabled: true
                     blur: 1
                     blurMax: 64
+                    autoPaddingEnabled: false
                 }
 
                 // Light scrim on top of the blur for text legibility.
