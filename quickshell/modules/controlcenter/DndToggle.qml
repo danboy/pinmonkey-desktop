@@ -8,9 +8,8 @@ QuickToggleTile {
     iconName: "notifications-disabled-symbolic"
     iconFallback: "notification-disabled-symbolic"
     on: ShellSettings.notificationsDndEnabled
-    title: "Do Not Disturb"
+    title: "DnD"
     subtitle: on ? "On" : "Off"
-
     onToggled: ShellSettings.notificationsDndEnabled = !ShellSettings.notificationsDndEnabled
     onTitleClicked: {
         PopupCoordinator.closeAll();
