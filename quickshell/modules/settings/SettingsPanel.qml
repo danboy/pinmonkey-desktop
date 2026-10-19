@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs
+import qs.modules.components
 import qs.modules.services
 
 Item {
@@ -83,11 +84,18 @@ Item {
         }
     }
 
+    CloseDelay {
+        id: closeDelay
+
+        open: SettingsState.open
+    }
+
     // Loader-gated so the layer-shell surface (and its on-demand keyboard focus) is fully
-    // destroyed on close rather than left mapped-but-hidden - see Launcher.qml for the same
-    // reasoning, and PopupCoordinator for why that matters (e.g. while the lock screen is up).
+    // destroyed on close (after a brief tail for the close animation on `card` below) rather
+    // than left mapped-but-hidden - see Launcher.qml for the same reasoning, and
+    // PopupCoordinator for why that matters (e.g. while the lock screen is up).
     Loader {
-        active: SettingsState.open
+        active: closeDelay.active
 
         sourceComponent: WlrLayershell {
             id: settingsSurface
@@ -130,6 +138,22 @@ Item {
                     color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
                     border.width: Config.borderWidth
                     border.color: Config.colDivider
+                    opacity: SettingsState.open ? 1 : 0
+                    scale: SettingsState.open ? 1 : 0.96
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: Config.animationDurationMs
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: Config.animationDurationMs
+                            easing.type: Easing.OutCubic
+                        }
+                    }
 
                     MouseArea {
                         // swallow clicks so the background MouseArea doesn't close the panel

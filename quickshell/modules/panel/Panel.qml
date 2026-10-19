@@ -61,13 +61,30 @@ Variants {
                     onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
                 }
 
-                Text {
-                    Layout.maximumWidth: Config.panelWindowTitleMaxWidth
-                    elide: Text.ElideRight
-                    text: ActiveWindow.title
-                    font.family: Config.fontFamily
-                    font.pixelSize: Config.fontSizeCaption
-                    color: Config.colSubtext
+                Rectangle {
+                    id: titlePill
+
+                    Layout.preferredHeight: Config.pillHeight
+                    implicitWidth: titleText.width + Config.pillPaddingHorizontal
+                    radius: Config.radiusPill
+                    color: Config.colSurfaceVariant
+                    border.width: Config.borderWidth
+                    border.color: Config.colBorder
+                    visible: ActiveWindow.title.length > 0
+
+                    Text {
+                        id: titleText
+
+                        anchors.centerIn: parent
+                        width: Math.min(implicitWidth, Config.panelWindowTitleMaxWidth - Config.pillPaddingHorizontal)
+                        elide: Text.ElideRight
+                        text: ActiveWindow.title
+                        font.family: Config.fontFamily
+                        font.bold: true
+                        font.pixelSize: Config.fontSizeCaption
+                        color: Config.colText
+                    }
+
                 }
 
             }
@@ -80,9 +97,11 @@ Variants {
                 anchors.right: parent.right
                 anchors.rightMargin: Config.appletSpacing
 
-                RecordingIndicator {}
+                RecordingIndicator {
+                }
 
-                SystemTray {}
+                SystemTray {
+                }
 
                 ControlCenter {
                     Layout.rightMargin: Config.appletSpacing / 2

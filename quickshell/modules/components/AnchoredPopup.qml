@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Layouts
 import Quickshell
 import qs
+import qs.modules.components
 
 PopupWindow {
     id: popup
@@ -15,11 +16,22 @@ PopupWindow {
     // this - content height always wins via the max().
     property int minimumContentHeight: 0
 
+    // External callers toggle THIS, not `visible` - `visible` stays mapped a little longer
+    // (via CloseDelay) so the close animation on `card` below has time to play before the
+    // surface actually unmaps.
+    property bool open: false
+
     implicitWidth: Config.popupWidth
     implicitHeight: Math.max(contentLayout.implicitHeight, minimumContentHeight) + Config.popupMargin * 2
     color: "transparent"
-    visible: false
+    visible: closeDelay.active
     grabFocus: true
+
+    CloseDelay {
+        id: closeDelay
+
+        open: popup.open
+    }
 
     // "anchorItem" (a bar pill) is vertically centered inside a taller bar, so its
     // bottom edge sits above the bar's own bottom edge. Rather than rely on margin
@@ -47,14 +59,6 @@ PopupWindow {
     onVisibleChanged: if (visible)
         dismissCatcher.forceActiveFocus()
 
-    Rectangle {
-        anchors.fill: parent
-        color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
-        radius: Config.radiusLarge
-        border.width: Config.borderWidth
-        border.color: Config.colDivider
-    }
-
     Item {
         id: dismissCatcher
 
@@ -63,16 +67,46 @@ PopupWindow {
 
         property bool winActive: Window.active
 
-        Keys.onEscapePressed: popup.visible = false
+        Keys.onEscapePressed: popup.open = false
         onWinActiveChanged: if (!winActive)
-            popup.visible = false
+            popup.open = false
     }
 
-    ColumnLayout {
-        id: contentLayout
+    Item {
+        id: card
 
         anchors.fill: parent
-        anchors.margins: Config.popupMargin
-        spacing: Config.spacingXLarge
+        opacity: popup.open ? 1 : 0
+        scale: popup.open ? 1 : 0.96
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: Config.animationDurationMs
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        Behavior on scale {
+            NumberAnimation {
+                duration: Config.animationDurationMs
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
+            radius: Config.radiusLarge
+            border.width: Config.borderWidth
+            border.color: Config.colDivider
+        }
+
+        ColumnLayout {
+            id: contentLayout
+
+            anchors.fill: parent
+            anchors.margins: Config.popupMargin
+            spacing: Config.spacingXLarge
+        }
     }
 }

@@ -9,12 +9,15 @@ Variants {
     model: Quickshell.screens
 
     delegate: WlrLayershell {
+        id: toastWindow
+
         required property ShellScreen modelData
+        readonly property bool wantOpen: NotificationToast.visible && NotificationToast.notification !== null
 
         layer: WlrLayer.Overlay
         screen: modelData
         color: "transparent"
-        visible: NotificationToast.visible && NotificationToast.notification !== null
+        visible: closeDelay.active
         exclusiveZone: 0
 
         implicitWidth: Config.popupWidth
@@ -30,12 +33,34 @@ Variants {
             right: Config.spacingMedium
         }
 
+        CloseDelay {
+            id: closeDelay
+
+            open: toastWindow.wantOpen
+        }
+
         Rectangle {
             anchors.fill: parent
             radius: Config.radiusLarge
             color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
             border.width: Config.borderWidth
             border.color: Config.colBorderAccent
+            opacity: toastWindow.wantOpen ? 1 : 0
+            scale: toastWindow.wantOpen ? 1 : 0.96
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Config.animationDurationMs
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Config.animationDurationMs
+                    easing.type: Easing.OutCubic
+                }
+            }
 
             MouseArea {
                 anchors.fill: parent

@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs
+import qs.modules.components
 
 Variants {
     model: Quickshell.screens
@@ -14,7 +15,7 @@ Variants {
         layer: WlrLayer.Overlay
         screen: modelData
         color: "transparent"
-        visible: Osd.visible
+        visible: closeDelay.active
         exclusiveZone: 0
 
         implicitWidth: Config.osdWidth
@@ -23,12 +24,34 @@ Variants {
         anchors.bottom: true
         margins.bottom: Config.osdBottomMargin
 
+        CloseDelay {
+            id: closeDelay
+
+            open: Osd.visible
+        }
+
         Rectangle {
             anchors.fill: parent
             radius: Config.radiusLarge
             color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
             border.width: Config.borderWidth
             border.color: Config.colDivider
+            opacity: Osd.visible ? 1 : 0
+            scale: Osd.visible ? 1 : 0.96
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Config.animationDurationMs
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Config.animationDurationMs
+                    easing.type: Easing.OutCubic
+                }
+            }
 
             RowLayout {
                 id: content

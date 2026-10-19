@@ -34,7 +34,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
 
-        onClicked: popup.visible = !popup.visible
+        onClicked: popup.open = !popup.open
         onWheel: wheel => {
             if (!root.sink)
                 return;
@@ -53,7 +53,7 @@ Rectangle {
         Connections {
             target: PopupCoordinator
             function onCloseAll() {
-                popup.visible = false;
+                popup.open = false;
             }
         }
 

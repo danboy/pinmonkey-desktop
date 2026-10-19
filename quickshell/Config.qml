@@ -51,9 +51,11 @@ Singleton {
     readonly property int launcherRowHeight: 48
     readonly property int launcherIconSize: 28
     readonly property int launcherSearchHeight: 42
-    readonly property int infoPanelWidth: 480
-    readonly property int infoPanelHeight: 420
+    // Right column (notifications) matches the toast's width (popupWidth) so a notification
+    // reads the same size whether it's in this list or just arrived as a toast.
     readonly property int infoPanelLeftColumnWidth: 260
+    readonly property int infoPanelWidth: infoPanelLeftColumnWidth + spacingLarge + borderWidth + popupWidth + popupMargin * 2
+    readonly property int infoPanelHeight: 420
     readonly property int notificationsListMaxHeight: 240
     readonly property int panelWindowTitleMaxWidth: 320
     readonly property int calendarCellSize: 32

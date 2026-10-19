@@ -34,7 +34,7 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: popup.visible = !popup.visible
+        onClicked: popup.open = !popup.open
     }
 
     AnchoredPopup {
@@ -48,7 +48,7 @@ Rectangle {
         Connections {
             target: PopupCoordinator
             function onCloseAll() {
-                popup.visible = false;
+                popup.open = false;
             }
         }
 
@@ -84,7 +84,7 @@ Rectangle {
             }
 
             NotificationsWidget {
-                Layout.fillWidth: true
+                Layout.preferredWidth: Config.popupWidth
                 Layout.alignment: Qt.AlignTop
             }
         }

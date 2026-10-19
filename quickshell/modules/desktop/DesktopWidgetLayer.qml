@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs
+import qs.modules.components
 import qs.modules.services
 
 // Freeform widget canvas, toggled from the bar's grid icon (see Panel.qml). Unlike the lock
@@ -27,10 +28,17 @@ Item {
         }
     }
 
-    // The window is only instantiated while open, same reasoning as Launcher.qml - fully
-    // destroys the layer-shell surface (and its on-demand keyboard grab) on close.
+    CloseDelay {
+        id: closeDelay
+
+        open: DesktopWidgetsState.open
+    }
+
+    // The window is only instantiated while open (plus a brief tail for the close animation
+    // below), same reasoning as Launcher.qml - fully destroys the layer-shell surface (and
+    // its on-demand keyboard grab) on close.
     Loader {
-        active: DesktopWidgetsState.open
+        active: closeDelay.active
 
         sourceComponent: WlrLayershell {
             screen: Quickshell.screens[0]
@@ -56,6 +64,22 @@ Item {
 
                 anchors.fill: parent
                 focus: true
+                opacity: DesktopWidgetsState.open ? 1 : 0
+                scale: DesktopWidgetsState.open ? 1 : 0.96
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Config.animationDurationMs
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: Config.animationDurationMs
+                        easing.type: Easing.OutCubic
+                    }
+                }
 
                 Keys.onEscapePressed: DesktopWidgetsState.open = false
 

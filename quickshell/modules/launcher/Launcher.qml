@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
 import qs
+import qs.modules.components
 import qs.modules.services
 
 Item {
@@ -78,10 +79,17 @@ Item {
         }
     }
 
-    // The window is only instantiated while open, so closing fully destroys
-    // the layer-shell surface instead of leaving a hidden exclusive-focus grab behind.
+    CloseDelay {
+        id: closeDelay
+
+        open: LauncherState.open
+    }
+
+    // The window is only instantiated while open (plus a brief tail so the close animation
+    // on `card` below can play), so closing fully destroys the layer-shell surface instead
+    // of leaving a hidden exclusive-focus grab behind.
     Loader {
-        active: LauncherState.open
+        active: closeDelay.active
 
         sourceComponent: WlrLayershell {
             screen: Quickshell.screens[0]
@@ -114,6 +122,22 @@ Item {
                 color: Qt.rgba(Config.colSurface.r, Config.colSurface.g, Config.colSurface.b, Config.surfaceOpacity)
                 border.width: Config.borderWidth
                 border.color: Config.colDivider
+                opacity: LauncherState.open ? 1 : 0
+                scale: LauncherState.open ? 1 : 0.96
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Config.animationDurationMs
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: Config.animationDurationMs
+                        easing.type: Easing.OutCubic
+                    }
+                }
 
                 MouseArea {
                     // swallow clicks so the background MouseArea doesn't close the launcher
