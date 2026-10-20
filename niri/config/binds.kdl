@@ -231,4 +231,7 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 
     Menu { spawn "qs" "ipc" "call" "launcher" "toggle"; }
+
+    Mod+Alt+Left  { spawn "niri" "msg" "output" "eDP-1" "transform" "90"; }
+    Mod+Alt+Down  { spawn "niri" "msg" "output" "eDP-1" "transform" "normal"; }
 }
