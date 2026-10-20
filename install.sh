@@ -163,6 +163,18 @@ Restart Firefox afterwards so userChrome.css takes effect too.
 EOF
 }
 
+install_chrome_theme() {
+    cat <<'EOF'
+
+==> Chrome theme (Pinmonkey Fall)
+Chrome only loads unpacked themes with Developer mode on - there's no file this script can
+drop in place for it, same as Firefox's color theme:
+  1. Open Chrome, go to chrome://extensions
+  2. Turn on "Developer mode" (top right)
+  3. "Load unpacked" -> select the chrome-theme/ folder in this repo
+EOF
+}
+
 seed_env_file() {
     if [ ! -e "$REPO_DIR/.env" ]; then
         cp "$REPO_DIR/.env.example" "$REPO_DIR/.env"
@@ -190,6 +202,7 @@ main() {
     install_pam_service
     install_environment_d
     install_firefox_theme
+    install_chrome_theme
     seed_env_file
     ensure_video_group
 

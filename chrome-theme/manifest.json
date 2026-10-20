@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Pinmonkey Fall",
+  "version": "1.0",
+  "description": "Matches the pinmonkey-desktop shell's \"fall\" color scheme.",
+  "icons": {
+    "48": "icon-48.png",
+    "128": "icon-96.png"
+  },
+  "theme": {
+    "images": {},
+    "colors": {
+      "frame": [40, 36, 34],
+      "frame_inactive": [40, 36, 34],
+      "toolbar": [40, 36, 34],
+      "tab_text": [251, 241, 199],
+      "tab_background_text": [251, 241, 199, 0.55],
+      "bookmark_text": [251, 241, 199],
+      "toolbar_button_icon": [251, 241, 199],
+      "button_background": [82, 72, 64],
+
+      "ntp_background": [40, 36, 34],
+      "ntp_text": [251, 241, 199],
+      "ntp_link": [214, 93, 14],
+      "ntp_section": [82, 72, 64],
+      "ntp_section_text": [251, 241, 199],
+      "ntp_section_link": [214, 93, 14],
+      "ntp_section_border": [251, 241, 199, 0.1]
+    },
+    "properties": {
+      "ntp_background_alignment": "center"
+    }
+  }
+}
