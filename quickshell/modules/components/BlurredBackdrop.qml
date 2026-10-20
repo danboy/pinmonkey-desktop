@@ -21,8 +21,40 @@ Item {
     property real blurAmount: 1
     property real blurMaxAmount: 64
 
+    // captureFrame() allocates a GPU dmabuf buffer (GBM device + bo) for the shot and frees
+    // the one it's replacing, and that request can take anywhere from under a second to
+    // several seconds to actually resolve (hasContent). Confirmed against Launcher.qml's
+    // popup, which uses the same show/hide pattern but no ScreencopyView and survives rapid
+    // toggling fine: the crash is specifically tied to this capture, not to the hosting
+    // surface's own lifecycle (destroying/recreating it on every open and just hiding it
+    // were both tried, and both still crashed under rapid toggling). Two guards, used
+    // together because neither alone was enough: `lastCaptureTime` throttles how often a
+    // new capture can even be requested, and `pending` tracks whether one is still in
+    // flight so callers can avoid flipping the hosting surface's visibility while a capture
+    // is outstanding (see DesktopWidgetLayer.qml's `visible` binding) - letting the surface
+    // disappear and reappear mid-capture is what kept crashing it even with the request
+    // itself throttled.
+    property real lastCaptureTime: 0
+    readonly property int minCaptureIntervalMs: 1000
+    property bool pending: false
+
     function capture() {
+        const now = Date.now();
+        if (root.pending || now - root.lastCaptureTime < root.minCaptureIntervalMs)
+            return;
+        root.lastCaptureTime = now;
+        root.pending = true;
+        pendingTimeout.restart();
         Qt.callLater(backdropCapture.captureFrame);
+    }
+
+    // Fallback in case hasContent never arrives, so a lost frame can't wedge `pending`
+    // (and so the surface it gates) forever.
+    Timer {
+        id: pendingTimeout
+
+        interval: 5000
+        onTriggered: root.pending = false
     }
 
     ScreencopyView {
@@ -34,6 +66,10 @@ Item {
         height: root.surface.screen.height
         live: false
         captureSource: root.surface.screen
+        onHasContentChanged: if (hasContent) {
+            root.pending = false;
+            pendingTimeout.stop();
+        }
     }
 
     MultiEffect {

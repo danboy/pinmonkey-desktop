@@ -72,7 +72,7 @@ Variants {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: DesktopWidgetsState.open = !DesktopWidgetsState.open
+                        onClicked: DesktopWidgetsState.toggle()
                     }
 
                 }
