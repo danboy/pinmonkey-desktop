@@ -81,6 +81,16 @@ GridLayout {
                     value: widgetLoader.height
                     when: widgetLoader.item !== null
                 }
+
+                // Only NotepadWidget has a noteKey property - gated on type too, or this
+                // would warn on every other widget about assigning a non-existent property.
+                // The key is a stable (row, column) position since cells have no instance id.
+                Binding {
+                    target: widgetLoader.item
+                    property: "noteKey"
+                    value: box.modelData.row + ":" + box.modelData.column
+                    when: widgetLoader.item !== null && box.modelData.type === "notepad"
+                }
             }
         }
     }

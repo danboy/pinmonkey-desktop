@@ -64,6 +64,11 @@ Singleton {
 
     function removeDesktopWidget(id) {
         root.desktopWidgets = root.desktopWidgets.filter(w => w.id !== id);
+        if (Object.prototype.hasOwnProperty.call(root.notepadNotes, id)) {
+            const notes = Object.assign({}, root.notepadNotes);
+            delete notes[id];
+            root.notepadNotes = notes;
+        }
     }
 
     function updateDesktopWidgetRect(id, x, y, width, height) {
@@ -73,6 +78,16 @@ Singleton {
                 width,
                 height
             }) : w);
+    }
+
+    // Notepad widget contents, keyed by whichever caller owns the key (the desktop widget's
+    // own id, or a "row:column" key for a lock grid cell - see NotepadWidget.qml's noteKey).
+    property var notepadNotes: ({})
+
+    function setNotepadText(key, text) {
+        const notes = Object.assign({}, root.notepadNotes);
+        notes[key] = text;
+        root.notepadNotes = notes;
     }
 
     function save() {
@@ -86,7 +101,8 @@ Singleton {
             notificationsDndEnabled: root.notificationsDndEnabled,
             stayAwakeEnabled: root.stayAwakeEnabled,
             lockGridRows: root.lockGridRows,
-            desktopWidgets: root.desktopWidgets
+            desktopWidgets: root.desktopWidgets,
+            notepadNotes: root.notepadNotes
         }, null, 2));
     }
 
@@ -96,6 +112,7 @@ Singleton {
     onStayAwakeEnabledChanged: root.save()
     onLockGridRowsChanged: root.save()
     onDesktopWidgetsChanged: root.save()
+    onNotepadNotesChanged: root.save()
 
     FileView {
         id: file
@@ -118,6 +135,8 @@ Singleton {
                     root.lockGridRows = data.lockGridRows;
                 if (Array.isArray(data.desktopWidgets))
                     root.desktopWidgets = data.desktopWidgets;
+                if (data.notepadNotes && typeof data.notepadNotes === "object")
+                    root.notepadNotes = data.notepadNotes;
             } catch (e) {
                 console.log("ShellSettings: parse error", e);
             }

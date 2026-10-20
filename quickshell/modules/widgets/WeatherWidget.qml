@@ -16,72 +16,89 @@ ColumnLayout {
     function weatherIconName(code) {
         if (code === 0)
             return "weather-clear-symbolic";
+
         if (code <= 3)
             return "weather-few-clouds-symbolic";
+
         if (code === 45 || code === 48)
             return "weather-fog-symbolic";
+
         if (code >= 51 && code <= 57)
             return "weather-showers-scattered-symbolic";
+
         if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82))
             return "weather-showers-symbolic";
+
         if ((code >= 71 && code <= 77) || code === 85 || code === 86)
             return "weather-snow-symbolic";
+
         if (code >= 95)
             return "weather-storm-symbolic";
+
         return "weather-overcast-symbolic";
     }
 
     function weatherConditionText(code) {
         if (code === 0)
             return "Clear";
+
         if (code <= 3)
             return "Partly cloudy";
+
         if (code === 45 || code === 48)
             return "Fog";
+
         if (code >= 51 && code <= 57)
             return "Drizzle";
+
         if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82))
             return "Rain";
+
         if ((code >= 71 && code <= 77) || code === 85 || code === 86)
             return "Snow";
+
         if (code >= 95)
             return "Thunderstorm";
+
         return "Overcast";
     }
 
     function refreshWeather() {
         if (!Location.loaded)
-            return;
+            return ;
+
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${Location.latitude}&longitude=${Location.longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=${Config.weatherForecastDays}`;
-        Http.getJson(url, data => {
+        Http.getJson(url, (data) => {
+            // Skip today (index 0) - it's already shown as the current conditions above.
+
             if (data.current_weather) {
                 root.temperature = data.current_weather.temperature;
                 root.weatherCode = data.current_weather.weathercode;
                 root.loaded = true;
             }
-            if (data.daily) {
-                // Skip today (index 0) - it's already shown as the current conditions above.
-                root.forecast = data.daily.time.slice(1).map((date, i) => ({
-                            day: Qt.formatDate(new Date(date), "ddd"),
-                            weatherCode: data.daily.weathercode[i + 1],
-                            high: Math.round(data.daily.temperature_2m_max[i + 1]),
-                            low: Math.round(data.daily.temperature_2m_min[i + 1])
-                        }));
-            }
+            if (data.daily)
+                root.forecast = data.daily.time.slice(1).map((date, i) => {
+                return ({
+                    "day": Qt.formatDate(new Date(date), "ddd"),
+                    "weatherCode": data.daily.weathercode[i + 1],
+                    "high": Math.round(data.daily.temperature_2m_max[i + 1]),
+                    "low": Math.round(data.daily.temperature_2m_min[i + 1])
+                });
+            });
+
         }, "weather");
     }
 
     Layout.fillWidth: true
     spacing: Config.spacingSmall
-
     Component.onCompleted: refreshWeather()
 
     Connections {
-        target: Location
-
         function onLoadedChanged() {
             root.refreshWeather();
         }
+
+        target: Location
     }
 
     Timer {
@@ -99,13 +116,13 @@ ColumnLayout {
         color: Config.colText
     }
 
-    RowLayout {
+    ColumnLayout {
         Layout.fillWidth: true
         spacing: Config.spacingLarge
 
         IconImage {
             source: Quickshell.iconPath(root.weatherIconName(root.weatherCode), "weather-clear-symbolic")
-            implicitSize: Config.launcherIconSize
+            implicitSize: Config.weatherIconSizeLarge
             visible: root.loaded
         }
 
@@ -127,7 +144,9 @@ ColumnLayout {
                 font.pixelSize: Config.fontSizeCaption
                 color: Config.colSubtext
             }
+
         }
+
     }
 
     RowLayout {
@@ -165,7 +184,11 @@ ColumnLayout {
                     font.pixelSize: Config.fontSizeCaption
                     color: Config.colText
                 }
+
             }
+
         }
+
     }
+
 }

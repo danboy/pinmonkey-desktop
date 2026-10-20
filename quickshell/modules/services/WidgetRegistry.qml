@@ -9,7 +9,7 @@ import qs.modules.widgets
 Singleton {
     id: root
 
-    readonly property var types: ["weather", "news", "holiday", "transit", "calendar", "notifications"]
+    readonly property var types: ["weather", "news", "holiday", "transit", "calendar", "notifications", "notepad"]
 
     readonly property var components: ({
             weather: weatherComponent,
@@ -17,7 +17,8 @@ Singleton {
             holiday: holidayComponent,
             transit: transitComponent,
             calendar: calendarComponent,
-            notifications: notificationsComponent
+            notifications: notificationsComponent,
+            notepad: notepadComponent
         })
 
     function label(type) {
@@ -58,5 +59,11 @@ Singleton {
         id: notificationsComponent
 
         NotificationsWidget {}
+    }
+
+    Component {
+        id: notepadComponent
+
+        NotepadWidget {}
     }
 }
