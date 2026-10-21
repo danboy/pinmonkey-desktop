@@ -178,7 +178,7 @@ EOF
 seed_env_file() {
     if [ ! -e "$REPO_DIR/.env" ]; then
         cp "$REPO_DIR/.env.example" "$REPO_DIR/.env"
-        log "created $REPO_DIR/.env from .env.example - fill in CTA_TRAIN_API_KEY/CTA_BUS_API_KEY to enable the lock screen's transit widget (optional)"
+        log "created $REPO_DIR/.env from .env.example - fill in CTA_TRAIN_API_KEY/CTA_BUS_API_KEY for the transit widget and PINMONKEY_API_KEY for the holiday widget (both optional)"
     fi
 }
 

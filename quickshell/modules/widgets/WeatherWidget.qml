@@ -6,6 +6,8 @@ import qs
 import qs.modules.services
 
 ColumnLayout {
+    // Skip today (index 0) - it's already shown as the current conditions above.
+
     id: root
 
     property real temperature: 0
@@ -67,10 +69,8 @@ ColumnLayout {
         if (!Location.loaded)
             return ;
 
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${Location.latitude}&longitude=${Location.longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=${Config.weatherForecastDays}`;
+        const url = `https://api.open-meteo.com/v1/forecast?temperature_unit=fahrenheit&latitude=${Location.latitude}&longitude=${Location.longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=${Config.weatherForecastDays}`;
         Http.getJson(url, (data) => {
-            // Skip today (index 0) - it's already shown as the current conditions above.
-
             if (data.current_weather) {
                 root.temperature = data.current_weather.temperature;
                 root.weatherCode = data.current_weather.weathercode;
@@ -116,7 +116,7 @@ ColumnLayout {
         color: Config.colText
     }
 
-    ColumnLayout {
+    RowLayout {
         Layout.fillWidth: true
         spacing: Config.spacingLarge
 
@@ -131,7 +131,7 @@ ColumnLayout {
             spacing: 0
 
             Text {
-                text: root.loaded ? Math.round(root.temperature) + "°C" : "Loading…"
+                text: root.loaded ? Math.round(root.temperature) + "°F" : "Loading…"
                 font.family: Config.fontFamily
                 font.bold: true
                 font.pixelSize: Config.fontSizeBody
@@ -161,7 +161,7 @@ ColumnLayout {
                 required property var modelData
 
                 Layout.fillWidth: true
-                spacing: Config.spacingXSmall
+                spacing: Config.appletSpacing
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter

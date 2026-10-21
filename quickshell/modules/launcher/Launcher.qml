@@ -21,7 +21,13 @@ Item {
         if (!query)
             return apps;
         const q = query.toLowerCase();
-        return apps.filter(e => e.name.toLowerCase().includes(q));
+        return apps.filter(e => {
+            if (e.name.toLowerCase().includes(q))
+                return true;
+            if (e.genericName && e.genericName.toLowerCase().includes(q))
+                return true;
+            return e.keywords.some(k => k.toLowerCase().includes(q));
+        });
     }
     property int selectedIndex: 0
 

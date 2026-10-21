@@ -7,7 +7,7 @@ import QtQuick
 Singleton {
     id: root
 
-    function getText(url, callback, errorTag) {
+    function getText(url, callback, errorTag, headers) {
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = () => {
             if (xhr.readyState !== XMLHttpRequest.DONE)
@@ -19,16 +19,18 @@ Singleton {
             callback(xhr.responseText);
         };
         xhr.open("GET", url);
+        for (const name in (headers || {}))
+            xhr.setRequestHeader(name, headers[name]);
         xhr.send();
     }
 
-    function getJson(url, callback, errorTag) {
+    function getJson(url, callback, errorTag, headers) {
         root.getText(url, text => {
             try {
                 callback(JSON.parse(text));
             } catch (e) {
                 console.log(errorTag || "http", "parse error", url, e);
             }
-        }, errorTag);
+        }, errorTag, headers);
     }
 }
