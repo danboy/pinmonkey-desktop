@@ -45,6 +45,10 @@ Singleton {
     readonly property int osdBottomMargin: 64
     readonly property int osdVisibleMs: 1500
     readonly property int notificationToastVisibleMs: 5000
+    // How long with no input before a user counts as "away" for the toast-holding behavior
+    // below (see NotificationToast.qml) - short on purpose, this just needs to catch "stepped
+    // away from the desk", not a real idle/lock-grade timeout.
+    readonly property real notificationToastIdleTimeoutSec: 5
     readonly property int animationDurationMs: 150
     readonly property int launcherWidth: 480
     readonly property int launcherHeight: 420

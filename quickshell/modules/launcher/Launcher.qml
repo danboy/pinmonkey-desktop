@@ -98,7 +98,9 @@ Item {
         active: closeDelay.active
 
         sourceComponent: WlrLayershell {
-            screen: Quickshell.screens[0]
+            // The active monitor at open time, not just "whichever niri enumerated first" -
+            // see ActiveOutput.qml.
+            screen: ActiveOutput.screen
             layer: WlrLayer.Overlay
             namespace: "launcher"
             color: "transparent"
