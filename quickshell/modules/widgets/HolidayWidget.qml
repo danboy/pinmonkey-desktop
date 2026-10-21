@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs
+import qs.modules.components
 import qs.modules.services
 
 // Pulls from pinmonkey's own /public/events (event_type forced to "holiday" server-side),
@@ -10,8 +11,10 @@ import qs.modules.services
 // .env - see .env.example - same pattern TransitWidget uses for its CTA keys. Falls back to
 // showing nothing configured if no key is present, rather than silently reverting to a
 // different data source.
-ColumnLayout {
+WidgetLayout {
     id: root
+
+    title: "Holiday"
 
     readonly property string apiBase: "https://api.pinmonkey.com"
     property string apiKey: ""
@@ -76,10 +79,6 @@ ColumnLayout {
         refreshNext();
     }
 
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    spacing: Config.spacingSmall
-
     FileView {
         id: envFile
 
@@ -92,24 +91,22 @@ ColumnLayout {
         }
     }
 
-    Timer {
-        interval: 60 * 60 * 1000
-        running: root.configured
-        repeat: true
-        onTriggered: root.refreshHolidays()
-    }
+    // Refetches on every hour boundary rather than a fixed-interval Timer offset from
+    // whenever this widget happened to load - the interval version could leave "Today"
+    // showing yesterday's holiday for up to an hour after local midnight, since nothing
+    // tied it to the actual rollover. Hours is SystemClock's coarsest precision (there's
+    // no Days), but dateChanged still fires right on the midnight boundary with it, which
+    // is the one that actually matters here.
+    SystemClock {
+        id: hourWatcher
 
-    Text {
-        text: "Holiday"
-        font.family: Config.fontFamily
-        font.bold: true
-        font.pixelSize: Config.fontSizeBody
-        color: Config.colText
+        precision: SystemClock.Hours
+        onDateChanged: if (root.configured)
+            root.refreshHolidays()
     }
 
     ColumnLayout {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         spacing: 0
         visible: root.configured
 
@@ -125,7 +122,7 @@ ColumnLayout {
             }
             font.family: Config.fontFamily
             font.bold: true
-            font.pixelSize: Config.fontSizeBody
+            font.pixelSize: root.bodyFontSize
             color: Config.colText
         }
 
@@ -139,7 +136,7 @@ ColumnLayout {
                 return "";
             }
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeCaption
+            font.pixelSize: root.captionFontSize
             color: Config.colSubtext
         }
     }
@@ -149,7 +146,13 @@ ColumnLayout {
         visible: !root.configured
         text: "Holiday not configured"
         font.family: Config.fontFamily
-        font.pixelSize: Config.fontSizeCaption
+        font.pixelSize: root.captionFontSize
         color: Config.colSubtext
+    }
+
+    // Soaks up leftover height when the box is resized taller than the content needs,
+    // so content stays pinned to the top instead of ColumnLayout spreading it out.
+    Item {
+        Layout.fillHeight: true
     }
 }

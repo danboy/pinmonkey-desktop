@@ -85,6 +85,28 @@ Singleton {
     readonly property int lockPasswordFieldWidth: 220
     readonly property int lockGridColumns: 3
     readonly property int lockGridMargin: spacingXLarge
+    // --- Widget styling (via WidgetLayout.qml) ---
+    // Per-context padding/spacing/typography. "large" = a widget that owns a whole
+    // dedicated box (desktop overlay, lock grid). "small" = a widget sitting compactly
+    // alongside others (info panel). WidgetLayout picks a set via its `size` property;
+    // widgets read the resolved values off WidgetLayout (root.padding etc), never these
+    // directly.
+    readonly property var widgetSizes: ({
+            large: {
+                padding: 28,
+                spacing: spacingMedium,
+                titleFontSize: 16,
+                bodyFontSize: 14,
+                captionFontSize: 13
+            },
+            small: {
+                padding: spacingSmall,
+                spacing: spacingXSmall,
+                titleFontSize: fontSizeBody,
+                bodyFontSize: fontSizeBody,
+                captionFontSize: fontSizeCaption
+            }
+        })
     // --- Desktop widgets ---
     readonly property int desktopWidgetDefaultWidth: 280
     readonly property int desktopWidgetDefaultHeight: 200

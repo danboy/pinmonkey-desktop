@@ -4,11 +4,10 @@ import qs
 import qs.modules.components
 import qs.modules.services
 
-ColumnLayout {
+// No title: the header here is a RowLayout (title + "Clear all"), not the plain-string
+// title WidgetLayout renders - see WeatherWidget etc. for the common case.
+WidgetLayout {
     id: root
-
-    Layout.fillWidth: true
-    spacing: Config.spacingSmall
 
     RowLayout {
         Layout.fillWidth: true
@@ -19,7 +18,7 @@ ColumnLayout {
             text: "Notifications"
             font.family: Config.fontFamily
             font.bold: true
-            font.pixelSize: Config.fontSizeBody
+            font.pixelSize: root.titleFontSize
             color: Config.colText
         }
 
@@ -27,7 +26,7 @@ ColumnLayout {
             visible: Notifications.trackedNotifications.values.length > 0
             text: "Clear all"
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeCaption
+            font.pixelSize: root.captionFontSize
             color: Config.colAccent
 
             MouseArea {
@@ -43,7 +42,7 @@ ColumnLayout {
         visible: Notifications.trackedNotifications.values.length === 0
         text: "No notifications"
         font.family: Config.fontFamily
-        font.pixelSize: Config.fontSizeCaption
+        font.pixelSize: root.captionFontSize
         color: Config.colSubtext
     }
 
@@ -74,5 +73,11 @@ ColumnLayout {
                 onCloseClicked: modelData.dismiss()
             }
         }
+    }
+
+    // Soaks up leftover height when the box is resized taller than the content needs,
+    // so content stays pinned to the top instead of ColumnLayout spreading it out.
+    Item {
+        Layout.fillHeight: true
     }
 }

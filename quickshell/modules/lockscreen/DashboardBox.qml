@@ -17,10 +17,12 @@ Rectangle {
     border.width: Config.borderWidth
     border.color: Config.colText
 
+    // No margin here - the loaded widget is WidgetLayout-rooted (see WidgetRegistry.qml)
+    // and owns its own padding inset (defaults to the "large" context - see
+    // Config.widgetSizes), so a margin here would double it up.
     ColumnLayout {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Config.spacingLarge
     }
 }

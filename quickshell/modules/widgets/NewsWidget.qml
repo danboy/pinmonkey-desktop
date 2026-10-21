@@ -7,6 +7,10 @@ import qs.modules.services
 // background behind a highlighted headline, with the summary read out word-by-word
 // "spritz" style (RSVP speed-reading: one word at a time, pivot letter picked out) instead
 // of a static wrapped paragraph.
+//
+// Not WidgetLayout-rooted (the full-bleed image needs the outer edge for itself, not
+// inset by padding), so it only ever appears in the desktop overlay - hardcodes
+// Config.widgetSizes.large rather than taking a `size` context like the others.
 Item {
     id: root
 
@@ -81,7 +85,7 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Config.spacingSmall
+        anchors.margins: Config.widgetSizes.large.padding
         spacing: Config.spacingSmall
 
         Rectangle {
@@ -103,7 +107,7 @@ Item {
                 text: root.article ? root.article.title : "Loading…"
                 font.family: Config.fontFamily
                 font.bold: true
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: Config.widgetSizes.large.captionFontSize
                 color: Config.colAccentText
             }
         }
@@ -179,7 +183,7 @@ Item {
                 text: spritz.currentWord.length > 0 ? spritz.currentWord[spritz.highlightPos] : ""
                 font.family: Config.fontFamily
                 font.bold: true
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: Config.widgetSizes.large.captionFontSize
                 color: Config.colAccent
             }
 
@@ -192,7 +196,7 @@ Item {
                 elide: Text.ElideLeft
                 text: spritz.highlightPos > 0 ? spritz.currentWord.slice(0, spritz.highlightPos) : ""
                 font.family: Config.fontFamily
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: Config.widgetSizes.large.captionFontSize
                 color: Config.colText
             }
 
@@ -205,7 +209,7 @@ Item {
                 elide: Text.ElideRight
                 text: spritz.currentWord.slice(spritz.highlightPos + 1)
                 font.family: Config.fontFamily
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: Config.widgetSizes.large.captionFontSize
                 color: Config.colText
             }
         }

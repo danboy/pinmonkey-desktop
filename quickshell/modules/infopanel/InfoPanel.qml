@@ -63,7 +63,9 @@ Rectangle {
                 Layout.fillHeight: true
                 spacing: Config.spacingSmall
 
-                WeatherWidget {}
+                WeatherWidget {
+                    size: "small"
+                }
 
                 Item {
                     Layout.fillHeight: true
@@ -75,7 +77,9 @@ Rectangle {
                     Layout.fillHeight: true
                 }
 
-                CalendarWidget {}
+                CalendarWidget {
+                    size: "small"
+                }
             }
 
             Rectangle {
@@ -85,6 +89,7 @@ Rectangle {
             }
 
             NotificationsWidget {
+                size: "small"
                 Layout.preferredWidth: Config.popupWidth
                 Layout.alignment: Qt.AlignTop
             }

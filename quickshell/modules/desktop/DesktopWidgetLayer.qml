@@ -169,7 +169,6 @@ Item {
                         id: widgetLoader
 
                         anchors.fill: parent
-                        anchors.margins: Config.spacingSmall
                         sourceComponent: WidgetRegistry.components[box.modelData.type] ?? null
 
                         // See LockGrid.qml's identical Bindings - a Loader doesn't pass its
@@ -197,6 +196,12 @@ Item {
                             value: box.modelData.id
                             when: widgetLoader.item !== null && box.modelData.type === "notepad"
                         }
+
+                        // No `size` Binding needed here - WidgetLayout already defaults to
+                        // "large" (see Config.widgetSizes), which is what every widget
+                        // hosted in its own dedicated, resizable box should use. NewsWidget
+                        // (not WidgetLayout-rooted) has no such property at all, so binding
+                        // one in unconditionally like this would warn on it specifically.
                     }
 
                     // Covers the whole box so a widget can be dragged from anywhere on it,

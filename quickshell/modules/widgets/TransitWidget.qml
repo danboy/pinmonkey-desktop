@@ -3,14 +3,17 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs
+import qs.modules.components
 import qs.modules.services
 
 // CTA (Chicago Transit Authority) nearby train/bus arrivals. Nearby stops come from
 // the keyless Chicago Data Portal; arrivals need a free Train/Bus Tracker API key,
 // read at runtime from this repo's local (gitignored) .env - see .env.example - so no
 // key is ever hardcoded or committed.
-ColumnLayout {
+WidgetLayout {
     id: root
+
+    title: "CTA"
 
     property string trainKey: ""
     property string busKey: ""
@@ -88,10 +91,6 @@ ColumnLayout {
         refreshBus();
     }
 
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    spacing: Config.spacingSmall
-
     FileView {
         id: envFile
 
@@ -122,17 +121,8 @@ ColumnLayout {
         onTriggered: root.refreshTransit()
     }
 
-    Text {
-        text: "CTA"
-        font.family: Config.fontFamily
-        font.bold: true
-        font.pixelSize: Config.fontSizeBody
-        color: Config.colText
-    }
-
     ColumnLayout {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         spacing: Config.spacingXSmall
         visible: root.configured
 
@@ -142,7 +132,7 @@ ColumnLayout {
             elide: Text.ElideRight
             text: root.trainArrivals.length > 0 ? root.trainArrivals.map(a => a.route + " " + a.minutes + "m").join("  ·  ") : (root.trainStation ? "No arrivals" : "Loading…")
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeCaption
+            font.pixelSize: root.captionFontSize
             color: Config.colSubtext
         }
 
@@ -152,7 +142,7 @@ ColumnLayout {
             elide: Text.ElideRight
             text: root.busArrivals.length > 0 ? root.busArrivals.map(a => a.route + " " + a.minutes + "m").join("  ·  ") : (root.busStop ? "No arrivals" : "Loading…")
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeCaption
+            font.pixelSize: root.captionFontSize
             color: Config.colSubtext
         }
     }
@@ -162,7 +152,13 @@ ColumnLayout {
         visible: !root.configured
         text: "Transit not configured"
         font.family: Config.fontFamily
-        font.pixelSize: Config.fontSizeCaption
+        font.pixelSize: root.captionFontSize
         color: Config.colSubtext
+    }
+
+    // Soaks up leftover height when the box is resized taller than the content needs,
+    // so content stays pinned to the top instead of ColumnLayout spreading it out.
+    Item {
+        Layout.fillHeight: true
     }
 }

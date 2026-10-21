@@ -3,12 +3,15 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import qs
+import qs.modules.components
 import qs.modules.services
 
-ColumnLayout {
+WidgetLayout {
     // Skip today (index 0) - it's already shown as the current conditions above.
 
     id: root
+
+    title: "Weather"
 
     property real temperature: 0
     property int weatherCode: -1
@@ -89,8 +92,6 @@ ColumnLayout {
         }, "weather");
     }
 
-    Layout.fillWidth: true
-    spacing: Config.spacingSmall
     Component.onCompleted: refreshWeather()
 
     Connections {
@@ -106,14 +107,6 @@ ColumnLayout {
         running: true
         repeat: true
         onTriggered: root.refreshWeather()
-    }
-
-    Text {
-        text: "Weather"
-        font.family: Config.fontFamily
-        font.bold: true
-        font.pixelSize: Config.fontSizeBody
-        color: Config.colText
     }
 
     RowLayout {
@@ -134,14 +127,14 @@ ColumnLayout {
                 text: root.loaded ? Math.round(root.temperature) + "°F" : "Loading…"
                 font.family: Config.fontFamily
                 font.bold: true
-                font.pixelSize: Config.fontSizeBody
+                font.pixelSize: root.bodyFontSize
                 color: Config.colText
             }
 
             Text {
                 text: root.loaded ? (root.weatherConditionText(root.weatherCode) + " · " + Location.cityName) : Location.cityName
                 font.family: Config.fontFamily
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: root.captionFontSize
                 color: Config.colSubtext
             }
 
@@ -167,7 +160,7 @@ ColumnLayout {
                     Layout.alignment: Qt.AlignHCenter
                     text: modelData.day
                     font.family: Config.fontFamily
-                    font.pixelSize: Config.fontSizeCaption
+                    font.pixelSize: root.captionFontSize
                     color: Config.colSubtext
                 }
 
@@ -181,7 +174,7 @@ ColumnLayout {
                     Layout.alignment: Qt.AlignHCenter
                     text: modelData.high + "°/" + modelData.low + "°"
                     font.family: Config.fontFamily
-                    font.pixelSize: Config.fontSizeCaption
+                    font.pixelSize: root.captionFontSize
                     color: Config.colText
                 }
 
@@ -189,6 +182,12 @@ ColumnLayout {
 
         }
 
+    }
+
+    // Soaks up leftover height when the box is resized taller than the content needs,
+    // so content stays pinned to the top instead of ColumnLayout spreading it out.
+    Item {
+        Layout.fillHeight: true
     }
 
 }

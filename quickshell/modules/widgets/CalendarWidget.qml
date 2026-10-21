@@ -1,9 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
 import qs
+import qs.modules.components
 
-ColumnLayout {
+WidgetLayout {
     id: root
+
+    title: "Calendar"
 
     property date viewDate: new Date()
     readonly property int year: viewDate.getFullYear()
@@ -41,17 +44,6 @@ ColumnLayout {
         viewDate = new Date(year, month + 1, 1);
     }
 
-    Layout.fillWidth: true
-    spacing: Config.spacingSmall
-
-    Text {
-        text: "Calendar"
-        font.family: Config.fontFamily
-        font.bold: true
-        font.pixelSize: Config.fontSizeBody
-        color: Config.colText
-    }
-
     RowLayout {
         Layout.fillWidth: true
 
@@ -60,7 +52,7 @@ ColumnLayout {
             horizontalAlignment: Text.AlignHCenter
             text: "‹"
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeBody
+            font.pixelSize: root.bodyFontSize
             color: Config.colText
 
             MouseArea {
@@ -75,7 +67,7 @@ ColumnLayout {
             text: Qt.formatDate(root.viewDate, "MMMM yyyy")
             font.family: Config.fontFamily
             font.bold: true
-            font.pixelSize: Config.fontSizeBody
+            font.pixelSize: root.bodyFontSize
             color: Config.colText
         }
 
@@ -84,7 +76,7 @@ ColumnLayout {
             horizontalAlignment: Text.AlignHCenter
             text: "›"
             font.family: Config.fontFamily
-            font.pixelSize: Config.fontSizeBody
+            font.pixelSize: root.bodyFontSize
             color: Config.colText
 
             MouseArea {
@@ -110,7 +102,7 @@ ColumnLayout {
                 horizontalAlignment: Text.AlignHCenter
                 text: modelData
                 font.family: Config.fontFamily
-                font.pixelSize: Config.fontSizeCaption
+                font.pixelSize: root.captionFontSize
                 color: Config.colSubtext
             }
         }
@@ -138,11 +130,17 @@ ColumnLayout {
                         anchors.centerIn: parent
                         text: modelData ?? ""
                         font.family: Config.fontFamily
-                        font.pixelSize: Config.fontSizeCaption
+                        font.pixelSize: root.captionFontSize
                         color: modelData !== null && root.isToday(modelData) ? Config.colAccentText : Config.colText
                     }
                 }
             }
         }
+    }
+
+    // Soaks up leftover height when the box is resized taller than the content needs,
+    // so content stays pinned to the top instead of ColumnLayout spreading it out.
+    Item {
+        Layout.fillHeight: true
     }
 }
