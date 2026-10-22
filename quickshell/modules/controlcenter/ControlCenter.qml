@@ -48,7 +48,7 @@ Rectangle {
         id: popup
 
         anchorItem: root
-        onVisibleChanged: Osd.suppressed = visible
+        onOpenChanged: Osd.suppressed = open
 
         Connections {
             target: PopupCoordinator

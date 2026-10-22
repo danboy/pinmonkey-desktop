@@ -16,16 +16,24 @@ PopupWindow {
     // this - content height always wins via the max().
     property int minimumContentHeight: 0
 
-    // External callers toggle THIS, not `visible` - `visible` stays mapped a little longer
-    // (via CloseDelay) so the close animation on `card` below has time to play before the
-    // surface actually unmaps.
+    // External callers toggle THIS, not `visible`.
     property bool open: false
 
     implicitWidth: Config.popupWidth
     implicitHeight: Math.max(contentLayout.implicitHeight, minimumContentHeight) + Config.popupMargin * 2
     color: "transparent"
-    visible: closeDelay.active
-    grabFocus: true
+    // Mapped once, for the shell's lifetime, same reasoning as DesktopWidgetLayer.qml's
+    // widgetSurface: toggling `visible` (map/unmap) on open/close used to race with the
+    // compositor's grabFocus release (same upstream niri/wlroots OnDemand-focus-release bug
+    // as omarchy#6858) - losing that race left an invisible surface mapped forever at its
+    // last anchor position, permanently eating clicks there with no way to close it since it
+    // was no longer "open" from QML's own perspective. Never unmapping at all sidesteps the
+    // race entirely. Click passthrough while closed is handled by `mask` below instead.
+    visible: true
+    // Only grabs the keyboard while actually open, not for the surface's whole (now
+    // permanent) lifetime - an unconditional grab here would steal focus from everything
+    // else as soon as the shell started.
+    grabFocus: popup.open
 
     CloseDelay {
         id: closeDelay
@@ -56,7 +64,16 @@ PopupWindow {
         }
     }
 
-    onVisibleChanged: if (visible)
+    // No `mask` while open or closing (closeDelay.active) so the card stays interactive
+    // through the fade-out; once settled, mask to a zero-area Region - an empty input
+    // region - so the surface, though still mapped, stops intercepting clicks anywhere.
+    mask: closeDelay.active ? null : clickThroughMask
+
+    Region {
+        id: clickThroughMask
+    }
+
+    onOpenChanged: if (popup.open)
         dismissCatcher.forceActiveFocus()
 
     Item {
@@ -68,7 +85,7 @@ PopupWindow {
         property bool winActive: Window.active
 
         Keys.onEscapePressed: popup.open = false
-        onWinActiveChanged: if (!winActive)
+        onWinActiveChanged: if (!winActive && popup.open)
             popup.open = false
     }
 
