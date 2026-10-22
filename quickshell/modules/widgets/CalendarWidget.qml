@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import qs
 import qs.modules.components
 
@@ -8,10 +9,23 @@ WidgetLayout {
 
     title: "Calendar"
 
-    property date viewDate: new Date()
+    // Not a plain `new Date()` - this widget is created once and lives for the whole shell
+    // session (InfoPanel instantiates it directly, no per-open Loader), so a one-shot
+    // `new Date()` freezes "today" at whichever day the shell happened to start, same bug
+    // class HolidayWidget had before switching to SystemClock. viewDate's initial value
+    // comes from this too, but prevMonth()/nextMonth() reassign it directly, which breaks
+    // the binding - intentional, so navigating away from the current month doesn't keep
+    // snapping back.
+    SystemClock {
+        id: clock
+
+        precision: SystemClock.Hours
+    }
+
+    property date viewDate: clock.date
     readonly property int year: viewDate.getFullYear()
     readonly property int month: viewDate.getMonth()
-    readonly property date today: new Date()
+    readonly property date today: clock.date
 
     function daysInMonth(y, m) {
         return new Date(y, m + 1, 0).getDate();

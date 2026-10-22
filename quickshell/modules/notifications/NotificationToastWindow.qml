@@ -17,7 +17,11 @@ Variants {
         layer: WlrLayer.Overlay
         screen: modelData
         color: "transparent"
-        visible: closeDelay.active
+        // Stays mapped permanently - toggling this (e.g. via CloseDelay) remaps the
+        // wl_surface on every notification, which races Qt's Wayland output-enter
+        // handling and segfaults in QWaylandWindow::calculateScreenFromSurfaceEvents.
+        // Show/hide is purely visual below (opacity/scale + input gating).
+        visible: true
         exclusiveZone: 0
 
         implicitWidth: Config.popupWidth
@@ -31,12 +35,6 @@ Variants {
         margins {
             top: Config.barHeight + Config.spacingMedium
             right: Config.spacingMedium
-        }
-
-        CloseDelay {
-            id: closeDelay
-
-            open: toastWindow.wantOpen
         }
 
         Rectangle {
@@ -64,6 +62,7 @@ Variants {
 
             MouseArea {
                 anchors.fill: parent
+                enabled: toastWindow.wantOpen
                 onClicked: NotificationToast.hide()
             }
 

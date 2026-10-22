@@ -16,7 +16,26 @@ WidgetLayout {
     // Loads once per noteKey rather than binding text directly to the store: a live
     // `text: ShellSettings.notepadNotes[...]` binding alongside the onTextChanged write-back
     // below is a binding loop (every keystroke re-triggers the same binding expression).
-    onNoteKeyChanged: textArea.text = root.noteKey ? (ShellSettings.notepadNotes[root.noteKey] ?? "") : ""
+    //
+    // Called from two places because noteKey (set by a host Binding right after the Loader
+    // creates this item) and ShellSettings.loaded (flipped once its own async FileView read
+    // finishes) can resolve in either order. Whichever fires first used to win permanently -
+    // when ShellSettings hadn't loaded yet, the store lookup below just returned "" and
+    // nothing ever re-ran it, so the real saved text got silently dropped every time this
+    // widget happened to spin up faster than the settings file read.
+    function loadNote() {
+        if (root.noteKey)
+            textArea.text = ShellSettings.notepadNotes[root.noteKey] ?? "";
+    }
+
+    onNoteKeyChanged: root.loadNote()
+
+    Connections {
+        target: ShellSettings
+        function onLoadedChanged() {
+            root.loadNote();
+        }
+    }
 
     ScrollView {
         Layout.fillWidth: true
