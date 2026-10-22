@@ -44,10 +44,22 @@ Rectangle {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onClicked: mouse => {
-                        if (mouse.button === Qt.LeftButton)
+                        // `onlyMenu` isn't reliable - some apps (e.g. Remmina, libappindicator
+                        // in general) expose no working Activate without actually setting that
+                        // flag, so calling activate() on them is a silent no-op. `hasMenu` is
+                        // the trustworthy signal: if there's a menu, left-click opens it (same
+                        // as right-click) - only fall back to activate() when there's no menu
+                        // to fall back to.
+                        if (mouse.button === Qt.LeftButton && !trayIcon.modelData.hasMenu) {
                             trayIcon.modelData.activate();
-                        else if (mouse.button === Qt.RightButton)
-                            trayIcon.modelData.display(trayIcon.QsWindow.window, mouse.x, mouse.y);
+                        } else if (mouse.button === Qt.LeftButton || mouse.button === Qt.RightButton) {
+                            // Anchored to the icon's bottom-right corner (window coordinates -
+                            // mouse.x/y alone are local to this tiny icon Item and open the
+                            // menu pinned near the window's origin instead) rather than the
+                            // exact click point, which left it visibly offset.
+                            const pos = trayIcon.QsWindow.itemPosition(trayIcon);
+                            trayIcon.modelData.display(trayIcon.QsWindow.window, pos.x + trayIcon.width, pos.y + trayIcon.height);
+                        }
                     }
                     onWheel: wheel => trayIcon.modelData.scroll(wheel.angleDelta.y, false)
                 }
