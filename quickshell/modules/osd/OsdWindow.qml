@@ -9,13 +9,13 @@ import qs.modules.components
 Variants {
     model: Quickshell.screens
 
-    delegate: WlrLayershell {
+    delegate: MaskedLayershell {
         required property ShellScreen modelData
 
         layer: WlrLayer.Overlay
         screen: modelData
         color: "transparent"
-        visible: closeDelay.active
+        open: Osd.visible
         exclusiveZone: 0
 
         implicitWidth: Config.osdWidth
@@ -23,12 +23,6 @@ Variants {
 
         anchors.bottom: true
         margins.bottom: Config.osdBottomMargin
-
-        CloseDelay {
-            id: closeDelay
-
-            open: Osd.visible
-        }
 
         Rectangle {
             anchors.fill: parent

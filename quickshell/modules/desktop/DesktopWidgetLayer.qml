@@ -28,30 +28,19 @@ Item {
         }
     }
 
-    CloseDelay {
-        id: closeDelay
-
-        open: DesktopWidgetsState.open
-    }
-
-    // Mapped once, for the shell's lifetime, and never unmapped again. This used to be
-    // unmapped (`visible: false`) whenever closed, on the theory that only an unmapped
-    // surface reliably stops swallowing clicks meant for e.g. the bar's own toggle icon.
-    // That toggling is the working theory for quickshell's intermittent segfault on
-    // open/close: mapping/unmapping a layer-shell surface makes it enter/leave the
-    // compositor's output tracking each time, and the crash is always a null
-    // QPlatformScreen inside QWaylandWindow::calculateScreenFromSurfaceEvents, which only
-    // runs off that enter/leave bookkeeping. Never unmapping it at all sidesteps the churn
-    // entirely. Click passthrough while closed is now handled by `mask` below instead of
-    // by unmapping.
-    WlrLayershell {
+    // Mapped once, for the shell's lifetime (see MaskedLayershell) - never unmapped on
+    // open/close, which is the fix for quickshell's intermittent segfault in
+    // QWaylandWindow::calculateScreenFromSurfaceEvents (map/unmap churns the compositor's
+    // output-enter bookkeeping). Click passthrough while closed is handled by `mask`
+    // (inside MaskedLayershell) instead of by unmapping.
+    MaskedLayershell {
         id: widgetSurface
 
         screen: Quickshell.screens[0]
         layer: WlrLayer.Overlay
         namespace: "desktop-widgets"
         color: "transparent"
-        visible: true
+        open: DesktopWidgetsState.open
         // OnDemand grants real keyboard focus to whatever's clicked inside (e.g.
         // NotepadWidget's TextArea) while the surface has no input mask. Known caveat:
         // clicking the bar's toggle icon to close while something here holds focus can
@@ -60,16 +49,6 @@ Item {
         // class of issue as omarchy#6858) - acceptable trade for notepad actually being
         // typeable.
         keyboardFocus: WlrKeyboardFocus.OnDemand
-        // No mask (full surface accepts input) while a close is still animating
-        // (closeDelay.active), so widgets stay interactive through the fade-out. Once
-        // that settles, mask to a zero-area Region - an empty input region - so the
-        // surface, though still mapped, stops intercepting clicks anywhere (same net
-        // effect the old unmap used to get, without ever touching map state).
-        mask: closeDelay.active ? null : clickThroughMask
-
-        Region {
-            id: clickThroughMask
-        }
 
         anchors {
             top: true
