@@ -1,8 +1,14 @@
 # Pinmonkey Fall — Chrome theme
 
-Maps the pinmonkey-desktop shell's "fall" palette (`#282422` background, `#524840` surfaces,
-`#d65d0e` orange accent, `#fbf1c7` cream text) onto Chrome's browser chrome (frame, tab strip,
-toolbar, bookmark bar, new tab page). Colors only — no page content is touched.
+Maps the pinmonkey-desktop shell's "fall" palette (`#141110` shadow, `#282422` background,
+`#524840` surfaces, `#d65d0e` orange accent, `#fbf1c7` cream text) onto Chrome's browser chrome
+(frame, tab strip, toolbar, bookmark bar, new tab page). Colors only — no page content is
+touched.
+
+The tab strip (`frame`) uses the darkest shadow tone and the active tab/toolbar uses the
+lighter `#524840` surface tone, so the focused tab reads clearly against its unfocused
+siblings - previously both were the same background color and the active tab was nearly
+invisible.
 
 Chrome themes can't recolor the omnibox/address bar field itself (unlike Firefox's
 `toolbar_field_*` keys) - that's a Chrome limitation, not something left out here.

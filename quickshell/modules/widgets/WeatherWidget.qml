@@ -8,15 +8,49 @@ import qs.modules.services
 
 WidgetLayout {
     // Skip today (index 0) - it's already shown as the current conditions above.
+    //ListView {
+    //    id: hourlyList
+    //    Layout.fillWidth: true
+    //    Layout.preferredHeight: Config.weatherHourlyRowHeight
+    //    visible: root.hourlyForecast.length > 0
+    //    orientation: ListView.Horizontal
+    //    clip: true
+    //    spacing: Config.spacingLarge
+    //    boundsBehavior: Flickable.StopAtBounds
+    //    model: root.hourlyForecast
+    //    delegate: ColumnLayout {
+    //        required property var modelData
+    //        width: Config.weatherHourlyRowHeight
+    //        spacing: Config.appletSpacing
+    //        Text {
+    //            Layout.alignment: Qt.AlignHCenter
+    //            text: modelData.hour
+    //            font.family: Config.fontFamily
+    //            font.pixelSize: root.captionFontSize
+    //            color: Config.colSubtext
+    //        }
+    //        IconImage {
+    //            Layout.alignment: Qt.AlignHCenter
+    //            source: Quickshell.iconPath(root.weatherIconName(modelData.weatherCode), "weather-clear-symbolic")
+    //            implicitSize: Config.iconSizeSmall
+    //        }
+    //        Text {
+    //            Layout.alignment: Qt.AlignHCenter
+    //            text: modelData.temp + "°"
+    //            font.family: Config.fontFamily
+    //            font.pixelSize: root.captionFontSize
+    //            color: Config.colText
+    //        }
+    //    }
+    //}
 
     id: root
-
-    title: "Weather"
 
     property real temperature: 0
     property int weatherCode: -1
     property bool loaded: false
     property var forecast: []
+    property var hourlyForecast: []
 
     function weatherIconName(code) {
         if (code === 0)
@@ -72,7 +106,7 @@ WidgetLayout {
         if (!Location.loaded)
             return ;
 
-        const url = `https://api.open-meteo.com/v1/forecast?temperature_unit=fahrenheit&latitude=${Location.latitude}&longitude=${Location.longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=${Config.weatherForecastDays}`;
+        const url = `https://api.open-meteo.com/v1/forecast?temperature_unit=fahrenheit&latitude=${Location.latitude}&longitude=${Location.longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=${Config.weatherForecastDays}`;
         Http.getJson(url, (data) => {
             if (data.current_weather) {
                 root.temperature = data.current_weather.temperature;
@@ -89,9 +123,26 @@ WidgetLayout {
                 });
             });
 
+            if (data.hourly) {
+                // open-meteo's hourly series starts at midnight today, so skip past
+                // whatever's already elapsed and show the next weatherHourlyCount hours.
+                const now = new Date();
+                const startIndex = data.hourly.time.findIndex((t) => {
+                    return new Date(t) >= now;
+                });
+                const from = startIndex === -1 ? 0 : startIndex;
+                root.hourlyForecast = data.hourly.time.slice(from, from + Config.weatherHourlyCount).map((time, i) => {
+                    return ({
+                        "hour": Qt.formatDateTime(new Date(time), "h AP"),
+                        "weatherCode": data.hourly.weathercode[from + i],
+                        "temp": Math.round(data.hourly.temperature_2m[from + i])
+                    });
+                });
+            }
         }, "weather");
     }
 
+    title: "Weather"
     Component.onCompleted: refreshWeather()
 
     Connections {
@@ -127,17 +178,22 @@ WidgetLayout {
                 text: root.loaded ? Math.round(root.temperature) + "°F" : "Loading…"
                 font.family: Config.fontFamily
                 font.bold: true
-                font.pixelSize: root.bodyFontSize
+                font.pixelSize: 48
                 color: Config.colText
             }
 
-            Text {
-                text: root.loaded ? (root.weatherConditionText(root.weatherCode) + " · " + Location.cityName) : Location.cityName
-                font.family: Config.fontFamily
-                font.pixelSize: root.captionFontSize
-                color: Config.colSubtext
-            }
+        }
 
+    }
+
+    RowLayout {
+        spacing: Config.spacingSmall
+
+        Text {
+            text: root.loaded ? (root.weatherConditionText(root.weatherCode) + " · " + Location.cityName) : Location.cityName
+            font.family: Config.fontFamily
+            font.pixelSize: root.captionFontSize
+            color: Config.colSubtext
         }
 
     }

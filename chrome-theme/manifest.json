@@ -10,14 +10,16 @@
   "theme": {
     "images": {},
     "colors": {
-      "frame": [40, 36, 34],
-      "frame_inactive": [40, 36, 34],
-      "toolbar": [40, 36, 34],
+      "frame": [20, 17, 15],
+      "frame_inactive": [20, 17, 15],
+      "toolbar": [82, 72, 64],
+      "toolbar_text": [251, 241, 199],
       "tab_text": [251, 241, 199],
-      "tab_background_text": [251, 241, 199, 0.55],
+      "tab_background_text": [251, 241, 199, 0.45],
       "bookmark_text": [251, 241, 199],
       "toolbar_button_icon": [251, 241, 199],
-      "button_background": [82, 72, 64],
+      "button_background": [214, 93, 14],
+      "toolbar_vertical_separator": [251, 241, 199, 0.15],
 
       "ntp_background": [40, 36, 34],
       "ntp_text": [251, 241, 199],

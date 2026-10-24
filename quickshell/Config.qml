@@ -121,6 +121,8 @@ Singleton {
     // --- Weather ---
     readonly property int weatherForecastDays: 5
     readonly property int weatherIconSizeLarge: 96
+    readonly property int weatherHourlyCount: 12
+    readonly property int weatherHourlyRowHeight: 64
     // --- Settings panel ---
     readonly property int settingsWidth: 580
     readonly property int settingsHeight: 520
