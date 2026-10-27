@@ -32,16 +32,8 @@ Item {
             label: "Display"
         },
         {
-            id: "keyboard",
-            label: "Keyboard"
-        },
-        {
-            id: "mouse",
-            label: "Mouse"
-        },
-        {
-            id: "touchpad",
-            label: "Touchpad"
+            id: "input",
+            label: "Keyboard & Mouse"
         },
         {
             id: "tablet",
@@ -247,19 +239,9 @@ Item {
                                 visible: SettingsState.tab === "display"
                             }
 
-                            KeyboardSettings {
+                            InputSettings {
                                 anchors.fill: parent
-                                visible: SettingsState.tab === "keyboard"
-                            }
-
-                            MouseSettings {
-                                anchors.fill: parent
-                                visible: SettingsState.tab === "mouse"
-                            }
-
-                            TouchpadSettings {
-                                anchors.fill: parent
-                                visible: SettingsState.tab === "touchpad"
+                                visible: SettingsState.tab === "input"
                             }
 
                             TabletSettings {

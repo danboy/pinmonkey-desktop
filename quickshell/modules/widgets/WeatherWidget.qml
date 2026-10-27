@@ -142,7 +142,6 @@ WidgetLayout {
         }, "weather");
     }
 
-    title: "Weather"
     Component.onCompleted: refreshWeather()
 
     Connections {
@@ -182,18 +181,20 @@ WidgetLayout {
                 color: Config.colText
             }
 
-        }
+            Text {
+                text: root.loaded ? (root.weatherConditionText(root.weatherCode)) : "..."
+                font.family: Config.fontFamily
+                font.pixelSize: root.captionFontSize
+                color: Config.colSubtext
+            }
 
-    }
+            Text {
+                text: Location.cityName
+                font.family: Config.fontFamily
+                font.pixelSize: root.captionFontSize
+                color: Config.colSubtext
+            }
 
-    RowLayout {
-        spacing: Config.spacingSmall
-
-        Text {
-            text: root.loaded ? (root.weatherConditionText(root.weatherCode) + " · " + Location.cityName) : Location.cityName
-            font.family: Config.fontFamily
-            font.pixelSize: root.captionFontSize
-            color: Config.colSubtext
         }
 
     }
