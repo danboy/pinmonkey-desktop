@@ -51,18 +51,13 @@ ColumnLayout {
             onIconClicked: root.sink.audio.muted = !root.sink.audio.muted
         }
 
-        Repeater {
-            model: root.outputs
-
-            delegate: SettingsRow {
-                required property var modelData
-
-                iconName: "audio-card-symbolic"
-                iconFallback: "audio-card"
-                title: modelData.description || modelData.nickname
-                highlighted: modelData === root.sink
-                onClicked: Pipewire.preferredDefaultAudioSink = modelData
-            }
+        DropdownSelect {
+            options: root.outputs.map(n => ({
+                label: n.description || n.nickname,
+                value: n
+            }))
+            selectedValue: root.sink
+            onSelected: value => Pipewire.preferredDefaultAudioSink = value
         }
     }
 
@@ -86,17 +81,13 @@ ColumnLayout {
             onIconClicked: root.source.audio.muted = !root.source.audio.muted
         }
 
-        Repeater {
-            model: root.inputs
-
-            delegate: SettingsRow {
-                required property var modelData
-
-                iconName: "audio-input-microphone-symbolic"
-                title: modelData.description || modelData.nickname
-                highlighted: modelData === root.source
-                onClicked: Pipewire.preferredDefaultAudioSource = modelData
-            }
+        DropdownSelect {
+            options: root.inputs.map(n => ({
+                label: n.description || n.nickname,
+                value: n
+            }))
+            selectedValue: root.source
+            onSelected: value => Pipewire.preferredDefaultAudioSource = value
         }
     }
 

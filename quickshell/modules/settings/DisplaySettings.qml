@@ -214,13 +214,12 @@ ColumnLayout {
                 color: Config.colSubtext
             }
 
-            PillSelector {
+            DropdownSelect {
                 options: root.selected ? root.selected.modes.map(m => ({
-                    label: root.modeLabel(m),
-                    value: root.modeArg(m),
-                    preferred: m.is_preferred === true
+                    label: root.modeLabel(m) + (m.is_preferred === true ? " (preferred)" : ""),
+                    value: root.modeArg(m)
                 })) : []
-                currentValue: root.selected && root.selected.current_mode !== undefined && root.selected.current_mode !== null ? root.modeArg(root.selected.modes[root.selected.current_mode]) : ""
+                selectedValue: root.selected && root.selected.current_mode !== undefined && root.selected.current_mode !== null ? root.modeArg(root.selected.modes[root.selected.current_mode]) : ""
                 onSelected: value => root.run(root.selectedOutput, ["mode", value])
             }
         }
