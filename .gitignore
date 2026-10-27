@@ -1,3 +1,4 @@
 .env
 .shell-settings.json
+.launcher-history.json
 niri/config.kdl.bak.*

@@ -18,16 +18,17 @@ Item {
     }
     property string query: ""
     readonly property var filtered: {
-        if (!query)
-            return apps;
         const q = query.toLowerCase();
-        return apps.filter(e => {
+        const matches = !query ? apps : apps.filter(e => {
             if (e.name.toLowerCase().includes(q))
                 return true;
             if (e.genericName && e.genericName.toLowerCase().includes(q))
                 return true;
             return e.keywords.some(k => k.toLowerCase().includes(q));
         });
+        // Apps previously picked after typing this same search bubble to the top, most-picked
+        // first; everything else keeps its existing (alphabetical) order.
+        return [...matches].sort((a, b) => LauncherState.scoreFor(query, b.id) - LauncherState.scoreFor(query, a.id));
     }
     property int selectedIndex: 0
 
@@ -55,6 +56,7 @@ Item {
     function launchSelected() {
         const entry = filtered[selectedIndex];
         if (entry) {
+            LauncherState.recordSelection(query, entry.id);
             entry.execute();
             closeLauncher();
         }
