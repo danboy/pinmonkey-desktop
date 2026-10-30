@@ -1,6 +1,7 @@
 //@ pragma UseQApplication
 import QtQuick
 import Quickshell
+import qs.modules.controlcenter
 import qs.modules.desktop
 import qs.modules.launcher
 import qs.modules.lockscreen
@@ -35,6 +36,9 @@ ShellRoot {
     }
 
     DesktopWidgetLayer {
+    }
+
+    PowerMenuModal {
     }
 
 }

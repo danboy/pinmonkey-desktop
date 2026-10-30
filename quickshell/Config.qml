@@ -133,4 +133,8 @@ Singleton {
     readonly property int screenshotWidth: 360
     readonly property int screenshotModeButtonHeight: 64
     readonly property int screenshotCaptureButtonHeight: 40
+    // --- Power menu ---
+    readonly property int powerModalColumns: 3
+    readonly property int powerModalCardSize: 118
+    readonly property int powerModalCardIconBoxSize: 40
 }
