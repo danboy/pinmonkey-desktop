@@ -21,6 +21,7 @@ Item {
 
     function close() {
         ScreenshotState.open = false;
+        root.selectionActive = false;
     }
 
     Connections {
