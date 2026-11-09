@@ -151,13 +151,40 @@ Item {
     }
 
     property bool selectionActive: false
+    property bool reopenSelectionPending: false
+
+    // Signaled from the panel's and the selection overlay's own WlrLayershell
+    // Component.onDestruction, once their Loader has actually torn the surface down - Loader
+    // destruction is deferred/async (not bound by any fixed delay), so waiting for this
+    // instead of guessing a timeout avoids a window where an old layer-shell surface and a
+    // newly (re)mapped one briefly coexist. That overlap has been observed to crash
+    // quickshell outright (confirmed via its own crash reports: SIGSEGV inside Wayland
+    // dispatch), both panel-then-selection and selection-reopened-quickly.
+    signal panelSurfaceDestroyed()
+    signal selectionSurfaceDestroyed()
+
+    onPanelSurfaceDestroyed: root.maybeReopenSelection()
+    onSelectionSurfaceDestroyed: root.maybeReopenSelection()
+
+    function maybeReopenSelection() {
+        if (root.reopenSelectionPending) {
+            root.reopenSelectionPending = false;
+            selectionOpenTimer.restart();
+        }
+    }
 
     // Our own selection UI (SelectionCapture.qml), not niri's native one - see that file for
-    // why. Same unmap-delay dance as captureNiri: give the panel's surface a moment to
-    // actually stop painting before the selection overlay (and its own capture) takes over.
+    // why. If the config panel or a previous selection overlay is still mapped, wait for its
+    // surface to actually be destroyed (see the signals above) before mapping a new one. Same
+    // unmap-delay dance as captureNiri after that: give the compositor a moment to actually
+    // repaint without it before the capture happens.
     function startSelection() {
-        root.close();
-        selectionOpenTimer.start();
+        if (ScreenshotState.open || root.selectionActive) {
+            root.reopenSelectionPending = true;
+            root.close();
+        } else {
+            selectionOpenTimer.restart();
+        }
     }
 
     Timer {
@@ -226,6 +253,12 @@ Item {
             namespace: "screenshot"
             color: "transparent"
             keyboardFocus: WlrKeyboardFocus.OnDemand
+            // See SelectionCapture.qml's exclusiveZone for why this is needed: without it
+            // niri shrinks this surface below the top bar's reserved strip instead of
+            // actually covering the full output.
+            exclusiveZone: -1
+
+            Component.onDestruction: root.panelSurfaceDestroyed()
 
             anchors {
                 top: true
@@ -539,6 +572,7 @@ Item {
             layer: WlrLayer.Overlay
             namespace: "screenshot-flash"
             color: "transparent"
+            exclusiveZone: -1
             mask: Region {}
 
             anchors {
@@ -568,6 +602,7 @@ Item {
 
         sourceComponent: SelectionCapture {
             onClosed: root.selectionActive = false
+            onReallyDestroyed: root.selectionSurfaceDestroyed()
         }
     }
 }

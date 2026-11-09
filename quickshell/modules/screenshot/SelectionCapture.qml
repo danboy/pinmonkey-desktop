@@ -15,6 +15,7 @@ Item {
     id: root
 
     signal closed()
+    signal reallyDestroyed()
 
     readonly property string screenshotDir: Quickshell.env("HOME") + "/Pictures/Screenshots"
     readonly property var targetScreen: Quickshell.screens[0]
@@ -85,6 +86,14 @@ Item {
         namespace: "screenshot-selection"
         color: "transparent"
         keyboardFocus: WlrKeyboardFocus.OnDemand
+        // Without this, niri still shrinks/offsets this surface to respect the top bar's
+        // reserved strip even though it's on the Overlay layer - the captured frame (which
+        // already has the real bar baked into its own top rows, since it's a screenshot of
+        // the real desktop) then gets drawn starting below that reserved strip, stacking a
+        // second bar-shaped slice directly under the real one.
+        exclusiveZone: -1
+
+        Component.onDestruction: root.reallyDestroyed()
 
         anchors {
             top: true
