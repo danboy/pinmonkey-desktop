@@ -8,7 +8,6 @@ SliderRow {
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property real volume: sink?.audio?.volume ?? 0
-    readonly property bool muted: sink?.audio?.muted ?? false
 
     function volumeIconName() {
         if (muted || volume <= 0)
@@ -23,9 +22,10 @@ SliderRow {
     iconName: volumeIconName()
     iconFallback: "audio-volume-high"
     value: volume
+    muted: sink?.audio?.muted ?? false
 
-    onVolumeChanged: Osd.show(volumeIconName(), volume, iconFallback)
-    onMutedChanged: Osd.show(volumeIconName(), volume, iconFallback)
+    onVolumeChanged: Osd.show(volumeIconName(), volume, iconFallback, muted)
+    onMutedChanged: Osd.show(volumeIconName(), volume, iconFallback, muted)
 
     onMoved: newValue => sink.audio.volume = newValue
     onIconClicked: sink.audio.muted = !sink.audio.muted

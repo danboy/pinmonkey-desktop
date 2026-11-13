@@ -47,6 +47,7 @@ ColumnLayout {
             iconName: root.sink?.audio?.muted ? "audio-volume-muted" : "audio-volume-high"
             iconFallback: "audio-volume-high"
             value: root.sink?.audio?.volume ?? 0
+            muted: root.sink?.audio?.muted ?? false
             onMoved: newValue => root.sink.audio.volume = newValue
             onIconClicked: root.sink.audio.muted = !root.sink.audio.muted
         }
@@ -77,6 +78,7 @@ ColumnLayout {
             iconName: root.source?.audio?.muted ? "microphone-sensitivity-muted-symbolic" : "microphone-sensitivity-high-symbolic"
             iconFallback: "audio-input-microphone-symbolic"
             value: root.source?.audio?.volume ?? 0
+            muted: root.source?.audio?.muted ?? false
             onMoved: newValue => root.source.audio.volume = newValue
             onIconClicked: root.source.audio.muted = !root.source.audio.muted
         }

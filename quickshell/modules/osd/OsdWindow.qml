@@ -69,7 +69,7 @@ Variants {
                         width: parent.width * Osd.value
                         height: parent.height
                         radius: Config.sliderTrackRadius
-                        color: Config.colAccent
+                        color: Osd.muted ? Config.colSubtext : Config.colAccent
                     }
                 }
 

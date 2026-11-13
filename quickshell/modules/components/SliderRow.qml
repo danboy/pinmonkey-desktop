@@ -10,6 +10,7 @@ RowLayout {
     property string iconFallback: iconName
     property int iconSize: Config.iconSizeSmall
     property real value: 0
+    property bool muted: false
 
     signal moved(real newValue)
     signal released(real newValue)
@@ -52,7 +53,7 @@ RowLayout {
                 width: slider.visualPosition * parent.width
                 height: parent.height
                 radius: Config.sliderTrackRadius
-                color: Config.colAccent
+                color: root.muted ? Config.colSubtext : Config.colAccent
             }
         }
 
