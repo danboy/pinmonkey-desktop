@@ -22,7 +22,8 @@ Rectangle {
 
         Rectangle {
             Layout.preferredWidth: Config.tileIconBoxSize
-            Layout.fillHeight: true
+            Layout.preferredHeight: Config.tileIconBoxSize
+            Layout.alignment: Qt.AlignVCenter
             radius: Config.radiusSmall
             color: Config.colSurfaceHighlight
             border.width: Config.borderWidth
@@ -37,6 +38,7 @@ Rectangle {
 
         Text {
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
             text: "Power"
             font.family: Config.fontFamily
             font.bold: true

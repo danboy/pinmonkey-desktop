@@ -39,12 +39,15 @@ Rectangle {
         spacing: Config.spacingLarge
 
         IconImage {
+            Layout.alignment: Qt.AlignVCenter
             source: Quickshell.iconPath(root.iconName, root.iconFallback)
             implicitSize: Config.iconSizeMedium
         }
 
         ColumnLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: false
+            Layout.alignment: Qt.AlignVCenter
             spacing: 0
 
             Text {

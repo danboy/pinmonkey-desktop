@@ -14,24 +14,27 @@ Singleton {
     readonly property int iconSizeStatus: Math.round(fontSize * 0.8)
     readonly property int iconSizeCaption: Math.round(fontSize * 0.7)
     // --- Spacing scale ---
-    readonly property int spacingXSmall: 1
-    readonly property int spacingSmall: 6
-    readonly property int spacingMedium: 8
-    readonly property int spacingLarge: 10
-    readonly property int spacingXLarge: 14
-    readonly property int appletRadHeight: 15
+    // All on a 4px baseline grid so stacked rows/margins land on whole grid steps.
+    readonly property int spacingXSmall: 4
+    readonly property int spacingSmall: 8
+    readonly property int spacingMedium: 12
+    readonly property int spacingLarge: 16
+    readonly property int spacingXLarge: 20
+    readonly property int appletRadHeight: 16
     readonly property int appletSpacing: spacingMedium
     // --- Component sizing ---
-    readonly property int pillHeight: 34
+    // Component heights snapped to the same 4px grid (pillHeight/barHeight and
+    // tileHeight/tileIconBoxSize each keep their original centering margin).
+    readonly property int pillHeight: 36
     readonly property int pillPaddingHorizontal: 20
-    readonly property int barHeight: 38
+    readonly property int barHeight: 40
     readonly property int borderWidth: 1
-    readonly property int tileHeight: 46
+    readonly property int tileHeight: 52
     readonly property int tileIconBoxSize: 32
     readonly property int tileContentMargin: 12
-    readonly property int iconButtonSize: 30
+    readonly property int iconButtonSize: 32
     readonly property int iconSizeSmall: 16
-    readonly property int iconSizeMedium: 18
+    readonly property int iconSizeMedium: 16
     readonly property int sliderTrackMinWidth: 200
     readonly property int sliderTrackHeight: 6
     readonly property int sliderTrackRadius: 3
@@ -54,7 +57,7 @@ Singleton {
     readonly property int launcherHeight: 420
     readonly property int launcherRowHeight: 48
     readonly property int launcherIconSize: 28
-    readonly property int launcherSearchHeight: 42
+    readonly property int launcherSearchHeight: 40
     // Right column (notifications) matches the toast's width (popupWidth) so a notification
     // reads the same size whether it's in this list or just arrived as a toast.
     readonly property int infoPanelLeftColumnWidth: 260
@@ -115,7 +118,7 @@ Singleton {
     readonly property int desktopWidgetDefaultWidth: 280
     readonly property int desktopWidgetDefaultHeight: 200
     readonly property int desktopWidgetMinSize: 120
-    readonly property int desktopWidgetResizeHandleSize: 18
+    readonly property int desktopWidgetResizeHandleSize: 16
     readonly property real desktopWidgetScrimOpacity: 0.2
     readonly property int desktopWidgetDragHandleHeight: 24
     // --- Weather ---
@@ -135,6 +138,6 @@ Singleton {
     readonly property int screenshotCaptureButtonHeight: 40
     // --- Power menu ---
     readonly property int powerModalColumns: 3
-    readonly property int powerModalCardSize: 118
+    readonly property int powerModalCardSize: 120
     readonly property int powerModalCardIconBoxSize: 40
 }

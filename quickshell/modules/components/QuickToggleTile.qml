@@ -27,8 +27,9 @@ Rectangle {
         spacing: Config.spacingLarge
 
         IconToggle {
-            Layout.fillHeight: true
             Layout.preferredWidth: Config.tileIconBoxSize
+            Layout.preferredHeight: Config.tileIconBoxSize
+            Layout.alignment: Qt.AlignVCenter
             iconName: root.iconName
             iconFallback: root.iconFallback
             on: root.on
@@ -37,6 +38,8 @@ Rectangle {
 
         ColumnLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: false
+            Layout.alignment: Qt.AlignVCenter
             spacing: Config.spacingXSmall
 
             Text {
