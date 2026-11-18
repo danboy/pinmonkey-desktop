@@ -4,18 +4,25 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs
+import qs.modules.services
 
 // Our own selection screenshot UI, replacing niri's native one (compiled into the niri
 // binary itself - no way to add resize handles to that from here). Draw once to set the
 // initial box, then drag its 8 handles or its body to adjust before confirming. The
-// captured frame is a single still (ScreencopyView, live: false) taken once up front and
-// reused for both the live dim/preview and the final crop, rather than re-capturing -
-// capturing again at confirm time would bake this very UI into the shot.
+// background is a single still (ScreencopyView, live: false) taken once up front rather
+// than re-captured at confirm time, which would bake this very UI into the shot - captured
+// twice in parallel (backgroundCapture for the on-screen preview, grabCapture for the final
+// crop) so the crop can be grabbed off-screen without resizing the visible preview.
 Item {
     id: root
 
     signal closed()
     signal reallyDestroyed()
+    // Emitted instead of copying/notifying locally - this Item is torn down right after
+    // confirm() (see onClosed), which races wl-copy's own fork-to-background. Handing the
+    // path up to ScreenshotPanel (never destroyed) lets that process actually finish
+    // detaching before anything can kill it.
+    signal captured(string path)
 
     readonly property string screenshotDir: Quickshell.env("HOME") + "/Pictures/Screenshots"
     readonly property var targetScreen: Quickshell.screens[0]
@@ -36,46 +43,53 @@ Item {
 
     // Capture context isn't realized synchronously on creation (same race as
     // BlurredBackdrop's) - deferred a tick with Qt.callLater.
-    Component.onCompleted: Qt.callLater(backgroundCapture.captureFrame)
+    Component.onCompleted: {
+        Qt.callLater(backgroundCapture.captureFrame);
+        Qt.callLater(grabCapture.captureFrame);
+        // Restore the last confirmed rectangle (if it still fits this screen) straight into
+        // adjust mode, instead of forcing a fresh draw every time Selection is opened.
+        if (ScreenshotState.hasLastSelection && ScreenshotState.lastSelW >= root.minSelectionSize && ScreenshotState.lastSelH >= root.minSelectionSize && ScreenshotState.lastSelX + ScreenshotState.lastSelW <= root.targetScreen.width && ScreenshotState.lastSelY + ScreenshotState.lastSelH <= root.targetScreen.height) {
+            root.selX = ScreenshotState.lastSelX;
+            root.selY = ScreenshotState.lastSelY;
+            root.selW = ScreenshotState.lastSelW;
+            root.selH = ScreenshotState.lastSelH;
+            root.adjusting = true;
+        }
+    }
 
     function confirm() {
         if (!root.hasFrame || root.selW < root.minSelectionSize || root.selH < root.minSelectionSize)
             return;
+
+        ScreenshotState.lastSelX = root.selX;
+        ScreenshotState.lastSelY = root.selY;
+        ScreenshotState.lastSelW = root.selW;
+        ScreenshotState.lastSelH = root.selH;
+        ScreenshotState.hasLastSelection = true;
+
         const stamp = Qt.formatDateTime(new Date(), "yyyy-MM-dd hh-mm-ss");
         const path = `${root.screenshotDir}/Screenshot from ${stamp}.png`;
         mkdirProcess.command = ["mkdir", "-p", root.screenshotDir];
         mkdirProcess.running = true;
 
-        // Resize the (normally full-screen, clip-is-a-no-op) crop host down to just the
-        // selection and shift the capture underneath it so only that region lands inside -
-        // then grab it. The overlay closes right after, so the one-frame visual jump this
-        // causes never actually gets seen.
-        cropFrame.width = root.selW;
-        cropFrame.height = root.selH;
-        backgroundCapture.x = -root.selX;
-        backgroundCapture.y = -root.selY;
+        // Resize the off-screen crop host (see grabFrame above) down to just the selection
+        // and shift the capture underneath it so only that region lands inside - then grab
+        // it. cropFrame itself (the visible preview) is never touched, so there's nothing
+        // for the user to see change.
+        grabFrame.width = root.selW;
+        grabFrame.height = root.selH;
+        grabCapture.x = -root.selX;
+        grabCapture.y = -root.selY;
 
-        cropFrame.grabToImage(result => {
-            if (result && result.saveToFile(path)) {
-                clipboardProcess.command = ["sh", "-c", `wl-copy --type image/png < ${JSON.stringify(path)}`];
-                clipboardProcess.running = true;
-                notifyProcess.command = ["notify-send", "-i", path, "Screenshot captured", "Copied to clipboard"];
-                notifyProcess.running = true;
-            }
+        grabFrame.grabToImage(result => {
+            if (result && result.saveToFile(path))
+                root.captured(path);
             root.close();
         }, Qt.size(root.selW, root.selH));
     }
 
     Process {
         id: mkdirProcess
-    }
-
-    Process {
-        id: clipboardProcess
-    }
-
-    Process {
-        id: notifyProcess
     }
 
     WlrLayershell {
@@ -132,6 +146,31 @@ Item {
                     captureSource: surface.screen
                     onHasContentChanged: if (hasContent)
                         root.hasFrame = true
+                }
+            }
+
+            // Off-screen clone, grabbed at confirm time instead of cropFrame above. Shrinking
+            // cropFrame itself down to the selection size (the previous approach) resized the
+            // live on-screen preview in place before closing, producing a visible one-frame
+            // jump from full-screen to a tiny crop. This pair lives at a permanently
+            // off-screen x so resizing it for the grab is never actually seen.
+            Item {
+                id: grabFrame
+
+                x: -surface.screen.width - 1000
+                width: surface.screen.width
+                height: surface.screen.height
+                clip: true
+
+                ScreencopyView {
+                    id: grabCapture
+
+                    x: 0
+                    y: 0
+                    width: surface.screen.width
+                    height: surface.screen.height
+                    live: false
+                    captureSource: surface.screen
                 }
             }
 

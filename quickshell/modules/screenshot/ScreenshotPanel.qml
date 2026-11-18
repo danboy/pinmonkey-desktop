@@ -97,6 +97,22 @@ Item {
         id: captureProcess
     }
 
+    Process {
+        id: clipboardProcess
+    }
+
+    // Handles SelectionCapture's `captured` signal - kept here rather than inside that
+    // component because this Item is never destroyed, while SelectionCapture is torn down
+    // right after confirm(). Running wl-copy from a Process that outlives the capture UI
+    // gives it time to actually fork to the background before anything can kill it; doing
+    // it from inside SelectionCapture raced that fork and sometimes lost the clipboard copy.
+    function copySelectionToClipboard(path) {
+        clipboardProcess.command = ["sh", "-c", `wl-copy --type image/png < ${JSON.stringify(path)}`];
+        clipboardProcess.running = true;
+        notifyProcess.command = ["notify-send", "-i", path, "Screenshot captured", "Copied to clipboard"];
+        notifyProcess.running = true;
+    }
+
     property bool flashActive: false
 
     Timer {
@@ -603,6 +619,7 @@ Item {
         sourceComponent: SelectionCapture {
             onClosed: root.selectionActive = false
             onReallyDestroyed: root.selectionSurfaceDestroyed()
+            onCaptured: path => root.copySelectionToClipboard(path)
         }
     }
 }

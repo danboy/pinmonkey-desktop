@@ -355,3 +355,4 @@ window-rule {
 
 include optional=true "config/binds.kdl"
 spawn-at-startup "quickshell"
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
