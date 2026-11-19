@@ -42,7 +42,7 @@ After installing, log out and back in (or restart niri) to pick up the `spawn-at
 | `niri/` | Compositor config — symlinked to `~/.config/niri` |
 | `qt/` | qt5ct/qt6ct settings + the shared "fall" color scheme |
 | `icons/` | `pixelitos-dark`/`pixelitos-light` icon theme |
-| `cursors/pixelfun2` | Cursor theme |
+| `cursors/pinmonkey-cursor` | Cursor theme — pixel-grid cursors in the fall palette |
 | `fonts/` | Bitcount Grid Single (the shell's only font) |
 | `pam.d/quickshell` | PAM service used by the lock screen's password check |
 | `environment.d/cursor.conf` | `XCURSOR_THEME`/`XCURSOR_SIZE` |

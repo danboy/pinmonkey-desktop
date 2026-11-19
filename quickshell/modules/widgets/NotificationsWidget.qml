@@ -70,6 +70,10 @@ WidgetLayout {
                 anchors.fill: parent
                 anchors.margins: Config.spacingSmall
                 notification: modelData
+                // "large" means this widget owns a standing, always-visible box (desktop
+                // overlay or lock screen) rather than sitting in the info panel's list,
+                // which only shows up when deliberately opened - see WidgetLayout.qml.
+                obscureDetails: root.size === "large"
                 onCloseClicked: modelData.dismiss()
             }
         }

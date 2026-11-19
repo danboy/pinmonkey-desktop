@@ -84,13 +84,20 @@ install_icon_theme() {
 
 install_cursor_theme() {
     log "installing cursor theme"
-    local target="$HOME/.local/share/icons/pixelfun2"
+    local theme="pinmonkey-cursor"
+    local target="$HOME/.local/share/icons/$theme"
+    local old="$HOME/.local/share/icons/pixelfun2"
     backup_if_exists "$target"
     mkdir -p "$HOME/.local/share/icons"
-    rsync -a "$REPO_DIR/cursors/pixelfun2/" "$target/"
+    rsync -a "$REPO_DIR/cursors/$theme/" "$target/"
     log "installed $target"
 
-    gsettings set org.gnome.desktop.interface cursor-theme pixelfun2
+    if [ -e "$old" ] && [ ! -e "$REPO_DIR/cursors/pixelfun2" ]; then
+        rm -rf "$old"
+        log "removed superseded cursor theme $old"
+    fi
+
+    gsettings set org.gnome.desktop.interface cursor-theme "$theme"
     gsettings set org.gnome.desktop.interface cursor-size 24
     log "set gsettings cursor-theme/cursor-size"
 }

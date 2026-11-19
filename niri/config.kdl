@@ -72,7 +72,7 @@ input {
 }
 
 cursor {
-    xcursor-theme "pixelfun2"
+    xcursor-theme "pinmonkey-cursor"
     xcursor-size 24
 }
 
